@@ -141,6 +141,7 @@ public class OrderDetails {
 		this.updatedAt = updatedAt;
 	}
 
+
 	/**
 	 * @param orderId
 	 * @param orderDate
@@ -148,11 +149,9 @@ public class OrderDetails {
 	 * @param totalOrderValue
 	 * @param shippingCost
 	 * @param status
-	 * @param createdAt
-	 * @param updatedAt
 	 */
 	public OrderDetails(int orderId, Date orderDate, int customerId, double totalOrderValue, double shippingCost,
-			String status, Time createdAt, Time updatedAt) {
+			String status) {
 		super();
 		this.orderId = orderId;
 		this.orderDate = orderDate;
@@ -160,8 +159,6 @@ public class OrderDetails {
 		this.totalOrderValue = totalOrderValue;
 		this.shippingCost = shippingCost;
 		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 
 	/**

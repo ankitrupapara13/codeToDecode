@@ -160,39 +160,7 @@ public class Customer {
 	public void setUpdatedAt(Time updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	/**
-	 * @param customerId
-	 * @param name
-	 * @param gstNumber
-	 * @param address
-	 * @param city
-	 * @param email
-	 * @param phone
-	 * @param pincode
-	 * @param password
-	 * @param lastLogin
-	 * @param createdAt
-	 * @param updatedAt
-	 */
-	public Customer(int customerId, String name, String gstNumber, String address, String city, String email,
-			String phone, String pincode, String password, Time lastLogin, Time createdAt, Time updatedAt) {
-		super();
-		this.customerId = customerId;
-		this.name = name;
-		this.gstNumber = gstNumber;
-		this.address = address;
-		this.city = city;
-		this.email = email;
-		this.phone = phone;
-		this.pincode = pincode;
-		this.password = password;
-		this.lastLogin = lastLogin;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-	}
-	/**
-	 * 
-	 */
+	
 	public Customer() {
 		super();
 		// TODO Auto-generated constructor stub
