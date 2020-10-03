@@ -36,7 +36,8 @@ public class ProductService {
 	 */
 	public void addProduct(Part file) {
 		String name = file.getSubmittedFileName();
-		String type = name.split(".")[1];
+		String type = name.split("\\.")[1];
+		
 		switch(type) {
 		case "xml":
 			try {
@@ -92,7 +93,9 @@ public class ProductService {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(inputStream);
-				
+		
+		int successCount = 0;
+		int failCount = 0;
 		
 		NodeList nodeList = document.getDocumentElement().getChildNodes();
 		
@@ -103,11 +106,16 @@ public class ProductService {
 			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				
 				Product product = processXMLObject(node);
-				
+				if(product == null)
+					failCount++;
+				else 
+					successCount++;
 //				productDAO.addProductsToDB(product)
 				
 			}
 		}
+		System.out.println("Success Count: " + successCount);
+		System.out.println("Failure Count: " + failCount);
 		
 		
 		
@@ -117,15 +125,25 @@ public class ProductService {
 	 */
 	private Product processXMLObject(Node node) {
 		Element element = (Element) node;
+		int productId = 0;
+		String productName = "";
+		double productPrice = 0;
+		int productCategoryId = 0;
 		
-		int productId  = Integer.parseInt(element.getElementsByTagName("ProductId")
-										.item(0).getChildNodes().item(0).getNodeValue());
-		String productName = element.getElementsByTagName("ProductName")
-										.item(0).getChildNodes().item(0).getNodeValue();
-		double productPrice = Double.parseDouble(element.getElementsByTagName("ProductPrice")
-										.item(0).getChildNodes().item(0).getNodeValue());
-		int productCategoryId = Integer.parseInt(element.getElementsByTagName("ProductCategoryId")
-										.item(0).getChildNodes().item(0).getNodeValue());
+		try {
+			productId  = Integer.parseInt(element.getElementsByTagName("ProductId")
+											.item(0).getChildNodes().item(0).getNodeValue());
+			productName = element.getElementsByTagName("ProductName")
+											.item(0).getChildNodes().item(0).getNodeValue();
+			productPrice = Double.parseDouble(element.getElementsByTagName("ProductPrice")
+											.item(0).getChildNodes().item(0).getNodeValue());
+			productCategoryId = Integer.parseInt(element.getElementsByTagName("ProductCategoryId")
+											.item(0).getChildNodes().item(0).getNodeValue());
+		}catch(NullPointerException e) {
+			return null;
+		}
+		if(productId <= 0 || productName == null || productPrice <= 0 || productCategoryId <= 0 )
+			return null;
 		
 		System.out.println("[ " + productId + ", " + productName + ", " + productPrice + ", " + productCategoryId + " ]");
 		
@@ -147,26 +165,44 @@ public class ProductService {
 		}
 		JSONParser parser = new JSONParser();
 		
+		int successCount = 0;
+		int failCount = 0;
+		
 		InputStreamReader inputStreamReader = new InputStreamReader(inputstream);
 		Object obj = parser.parse(inputStreamReader);
 		JSONArray json = (JSONArray)obj;
 		
 		for(Object product : json) {
 			Product productObj = this.processJSONObject((JSONObject)product);
-		
+			if(productObj == null)
+				failCount++;
+			else
+				successCount++;
 //			productDAO.addProductsToDB(product)
 		}
-	
+		System.out.println("Success Count: " + successCount);
+		System.out.println("Failure Count: " + failCount);
 	}
 	/*
 	 * Method parses JSON object to extract fields and created an object out of it
 	 */
 	private Product processJSONObject(JSONObject jsonObject) {
 		JSONObject product = (JSONObject) jsonObject;
-		long productId = (Long)product.get("productId");
-		String productName = (String)product.get("productName");
-		double productPrice = (Double)product.get("productPrice");
-		long productCategoryId = (Long)product.get("productCategoryId");
+		long productId = 0;
+		String productName = "";
+		double productPrice = 0;
+		long productCategoryId = 0;
+		try {
+			productId = (Long)product.get("productId");
+			productName = (String)product.get("productName");
+			productPrice = (Double)product.get("productPrice");
+			productCategoryId = (Long)product.get("productCategoryId");
+		}catch(NullPointerException e) {
+			return null;
+		}
+		if(productId <= 0 || productName == null || productPrice <= 0 || productCategoryId <= 0 )
+			return null;
+		
 		System.out.println("[ " + productId + ", " + productName + ", " + productPrice + ", " + productCategoryId + " ]");
 		
 		Product productObj = new Product((int)productId, productName, productPrice, (int)productCategoryId);

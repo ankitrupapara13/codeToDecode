@@ -47,7 +47,7 @@ public class ProductController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		productService.addProduct(request.getPart("file"));
-		doGet(request, response);
+//		doGet(request, response);
 	}
 
 }
