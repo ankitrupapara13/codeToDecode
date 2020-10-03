@@ -83,28 +83,21 @@ public class Employee {
 	public void setLastLogin(Time lastLogin) {
 		this.lastLogin = lastLogin;
 	}
+	
+	
+	
 	/**
 	 * @param employeeId
 	 * @param userName
 	 * @param password
 	 * @param lastLogin
 	 */
-	/**
-	 * @param employeeId
-	 * @param userName
-	 * @param password
-	 * @param lastLogin
-	 * @param createdAt
-	 * @param updatedAt
-	 */
-	public Employee(int employeeId, String userName, String password, Time lastLogin, Time createdAt, Time updatedAt) {
+	public Employee(int employeeId, String userName, String password, Time lastLogin) {
 		super();
 		this.employeeId = employeeId;
 		this.userName = userName;
 		this.password = password;
 		this.lastLogin = lastLogin;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 	/**
 	 * 

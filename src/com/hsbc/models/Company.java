@@ -83,23 +83,21 @@ public class Company {
 	public void setUpdatedAt(Time updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
+	
+	
 	/**
 	 * @param companyName
 	 * @param companyAddress
 	 * @param companyCity
 	 * @param gstNumber
-	 * @param createdAt
-	 * @param updatedAt
 	 */
-	public Company(String companyName, String companyAddress, String companyCity, String gstNumber, Time createdAt,
-			Time updatedAt) {
+	public Company(String companyName, String companyAddress, String companyCity, String gstNumber) {
 		super();
 		this.companyName = companyName;
 		this.companyAddress = companyAddress;
 		this.companyCity = companyCity;
 		this.gstNumber = gstNumber;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 	/**
 	 * 
