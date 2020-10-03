@@ -135,6 +135,7 @@ public class Invoice {
 	public void setUpdatedAt(Time updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
 	/**
 	 * @param invoiceId
 	 * @param invoiceDate
@@ -144,11 +145,9 @@ public class Invoice {
 	 * @param gstAmount
 	 * @param totalInvoiceAmount
 	 * @param status
-	 * @param createdAt
-	 * @param updatedAt
 	 */
-	public Invoice(int invoiceId, Date invoiceDate, int orderId, int customerId, int gstTypeId, float gstAmount,
-			float totalInvoiceAmount, boolean status, Time createdAt, Time updatedAt) {
+	public Invoice(int invoiceId, Date invoiceDate, int orderId, int customerId, int gstTypeId, double gstAmount,
+			double totalInvoiceAmount, boolean status) {
 		super();
 		this.invoiceId = invoiceId;
 		this.invoiceDate = invoiceDate;
@@ -158,8 +157,6 @@ public class Invoice {
 		this.gstAmount = gstAmount;
 		this.totalInvoiceAmount = totalInvoiceAmount;
 		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 	/**
 	 * 

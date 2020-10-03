@@ -5,7 +5,7 @@ import java.sql.Time;
 public class Product {
 
 	private int productId;
-	private int productName;
+	private String productName;
 	private double productPrice;
 	private int productCategoryId;
 	private Time createdAt;
@@ -25,13 +25,13 @@ public class Product {
 	/**
 	 * @return the productName
 	 */
-	public int getProductName() {
+	public String getProductName() {
 		return productName;
 	}
 	/**
 	 * @param productName the productName to set
 	 */
-	public void setProductName(int productName) {
+	public void setProductName(String productName) {
 		this.productName = productName;
 	}
 	/**
@@ -82,23 +82,19 @@ public class Product {
 	public void setUpdatedAt(Time updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
 	/**
 	 * @param productId
 	 * @param productName
 	 * @param productPrice
 	 * @param productCategoryId
-	 * @param createdAt
-	 * @param updatedAt
 	 */
-	public Product(int productId, int productName, float productPrice, int productCategoryId, Time createdAt,
-			Time updatedAt) {
+	public Product(int productId, String productName, double productPrice, int productCategoryId) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.productPrice = productPrice;
 		this.productCategoryId = productCategoryId;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 	/**
 	 * 
