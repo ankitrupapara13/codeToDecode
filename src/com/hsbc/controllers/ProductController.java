@@ -2,6 +2,7 @@ package com.hsbc.controllers;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +12,13 @@ import com.hsbc.service.ProductService;
 
 /**
  * Servlet implementation class ProductController
+ * 
+ * This receives JSON or XML file containing products information to
+ * be stored and calls service layer for further processing
+ * 
  */
 @WebServlet("/product")
-
+@MultipartConfig
 public class ProductController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
