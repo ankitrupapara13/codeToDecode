@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hsbc.dto.ProductFileDTO;
 import com.hsbc.service.ProductService;
 
 /**
@@ -46,7 +47,8 @@ public class ProductController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		productService.addProduct(request.getPart("file"));
+		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
+		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
 //		doGet(request, response);
 	}
 
