@@ -49,7 +49,9 @@ public class ProductController extends HttpServlet {
 		// TODO Auto-generated method stub
 		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
 		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
+		request.setAttribute("productFileResponse", productFileDTO);
 //		doGet(request, response);
+		
 	}
 
 }

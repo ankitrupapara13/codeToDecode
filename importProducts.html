@@ -13,7 +13,7 @@
                     document.getElementById("displayinvoice").innerHTML = xhr.responseText;
                 }
             }
-            xhr.open('GET', './demo', true);
+            xhr.open('POST', './product', true);
             xhr.send();
         }
     </script>
@@ -42,7 +42,7 @@
         </div>
         <div class="row">
 
-            <form action="./product" method="post" enctype="multipart/form-data">
+            <form>
                 <p style="color: black;">Enter JSON/XML file to upload:</p>
 
                 <div class="input-group mb-3">

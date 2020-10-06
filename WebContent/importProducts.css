@@ -1,0 +1,17 @@
+body {
+
+    background-color: #D3D3D3;
+    
+      
+  }
+  .navbar {
+
+    background-color: black;
+  }
+  .navbar a {
+  
+    color: white;
+  }
+  #h{
+    border: 2px solid red;
+  }
