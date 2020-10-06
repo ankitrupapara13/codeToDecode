@@ -6,15 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import Products</title>
     <script>
-        function showStatusOfOperations() {
+        /*function showStatusOfOperations() {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     document.getElementById("displayinvoice").innerHTML = xhr.responseText;
                 }
             }
-            xhr.open('POST', './product', true);
+            xhr.open('GET', './demo', true);
             xhr.send();
+        }*/
+        document.getElementById('file-submit', uploadFile)
+        function uploadFile(e){
+            e.preventDefault();
+            var input = document.getElementById('file-input');
+            console.log(input.files[0]);
+            var data = new FormData();
+            data.append('file', input.files[0]);
+            fetch('http://localhost:8090/orderProcessing/product', {
+                method: 'POST',
+                body: data
+            })
         }
     </script>
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
@@ -42,17 +54,17 @@
         </div>
         <div class="row">
 
-            <form>
+            <form W>
                 <p style="color: black;">Enter JSON/XML file to upload:</p>
 
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        <input type="file" name="file" class="custom-file-input" id="inputGroupFile02"
+                        <input type="file" name="file" class="custom-file-input" id="file-input"
                             accept=".xml,.json">
-                        <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                        <label class="custom-file-label" for="file-input">Choose file</label>
                     </div>
                     <div class="input-group-append">
-                        <button type="button" onlick="showStatusOfOperations()" class="input-group-text"
+                        <button id="file-submit" class="input-group-text"
                             class="btn btn-danger">Upload</button>
 
                     </div>
