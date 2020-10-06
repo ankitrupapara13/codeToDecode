@@ -35,30 +35,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import Products</title>
-    <script>
-        /*function showStatusOfOperations() {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("displayinvoice").innerHTML = xhr.responseText;
-                }
-            }
-            xhr.open('GET', './demo', true);
-            xhr.send();
-        }*/
-        document.getElementById('file-submit', function (event){
-        	  e.preventDefault();
-              var input = document.getElementById('file-input');
-              console.log(input.files[0]);
-              var data = new FormData();
-              data.append('file', input.files[0]);
-              fetch('http://localhost:8090/orderProcessing/product', {
-                  method: 'POST',
-                  body: data
-              })
-        })
- 
-    </script>
+    
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
     <link rel="stylesheet" type="text/css" href="importProducts.css">
 </head>
@@ -84,7 +61,7 @@
         </div>
         <div class="row">
 
-            <form method="post" action="./product" enctype="multipart/form-data">
+            <form >
                 <p style="color: black;">Enter JSON/XML file to upload:</p>
 
                 <div class="input-group mb-3">
@@ -94,7 +71,7 @@
                         <label class="custom-file-label" for="file-input">Choose file</label>
                     </div>
                     <div class="input-group-append">
-                        <button type="submit" class="input-group-text"
+                        <button id="file-submit" class="input-group-text"
                             class="btn btn-danger">Upload</button>
 
                     </div>
@@ -125,7 +102,41 @@
             <br>
         </footer>
     </div>
-
+	<script>
+        /*function showStatusOfOperations() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("displayinvoice").innerHTML = xhr.responseText;
+                }
+            }
+            xhr.open('GET', './demo', true);
+            xhr.send();
+        }*/
+        document.getElementById('file-submit').addEventListener('click', function (event){
+        	  event.preventDefault();
+              var input = document.getElementById('file-input');
+              console.log(input.files[0]);
+              var data = new FormData();
+              data.append('file', input.files[0]);
+              var xhr = new XMLHttpRequest();
+            /*  xhr.onreadystatechange = function () {
+                  if (xhr.readyState == 4 && xhr.status == 200) {
+                      document.getElementById("displayinvoice").innerHTML = xhr.responseText;
+                  }
+              }
+              xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
+              xhr.send(data);*/
+             fetch('http://localhost:8090/orderProcessing/product', {
+                  method: 'POST',
+                  headers:{
+                  contentType:'multipart/form-data'
+                  },
+                  body: data
+              })
+        })
+ 
+    </script>
 </body>
 
 </html>
