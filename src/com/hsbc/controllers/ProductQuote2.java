@@ -23,8 +23,10 @@ public class ProductQuote2 extends HttpServlet {
      * @see HttpServlet#HttpServlet()
      */
 	
-	NewQuoteService newQuoteService;
-	ProductQuoteDto productQuoteDto;
+	private NewQuoteService newQuoteService;
+	private ProductQuoteDto productQuoteDto;
+	
+
     public ProductQuote2() {
         
     	super();

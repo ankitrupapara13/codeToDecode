@@ -22,7 +22,8 @@ public class ProductQuote1 extends HttpServlet {
      * @see HttpServlet#HttpServlet()
      */
 	
-	NewQuoteService newQuoteService;
+	private NewQuoteService newQuoteService;
+	private Customer customer;
     public ProductQuote1() {
        
     	super();
@@ -36,8 +37,8 @@ public class ProductQuote1 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
 		HttpSession ss=request.getSession();
-		String custId=request.getParameter("customerId");
-		Customer customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
+		 String custId=request.getParameter("customerId");
+		customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
 		ss.setAttribute("customer", customer);
 		response.sendRedirect("NewQuote.jsp");
 	

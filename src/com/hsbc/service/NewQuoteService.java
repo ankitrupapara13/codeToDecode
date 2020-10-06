@@ -9,11 +9,11 @@ public class NewQuoteService {
 	
 	private double totalOrderValue;
 	private double shippingCost;
-	Customer c;
-	Product product;
-	ProductDao productDao;
-	CustomerDao customerDao;
-	ProductQuoteDto productQuoteDto;
+	private Customer c;
+	private Product product;
+	private ProductDao productDao;
+	private CustomerDao customerDao;
+	private ProductQuoteDto productQuoteDto;
 	
 
 	public NewQuoteService() 
