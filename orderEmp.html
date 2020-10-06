@@ -8,7 +8,7 @@
     <script>
         function onLoad() {
 
-            location.href="invoice.html";
+            window.href = "invoice.html";
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -16,7 +16,7 @@
                 }
             }
 
-            
+
             xhr.open('GET', './demo', true);
             xhr.send();
         }
@@ -99,9 +99,10 @@
 
     <hr id="h">
 
-    <div id="displayinvoice"></div>
+    <div id="displayinvoice"></div><br>
     <div style="padding-left: 20px;">
-        <button type="button" id="displayinvoice" onlick="onLoad()" class="btn btn-danger">View Invoice</button>
+        <a href="#" target="_blank"> <button type="button" id="displayinvoice" onlick="onLoad()"
+                class="btn btn-danger">View Invoice</button></a>
     </div><br>
     <a href="#" style="padding-left: 20px;">Add New Quote</a>
     <br>

@@ -41,19 +41,23 @@
 
         </div>
         <div class="row">
-            <p style="color: black;">Enter JSON/XML file to upload:</p>
 
-            <div class="input-group mb-3">
-                <div class="custom-file">
-                    <input type="file" name="file" class="custom-file-input" id="inputGroupFile02" accept=".xml,.json">
-                    <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
-                </div>
-                <div class="input-group-append">
-                    <button type="button" onlick="showStatusOfOperations()" class="input-group-text"
-                        class="btn btn-danger">Upload</button>
+            <form action="./product" method="post" enctype="multipart/form-data">
+                <p style="color: black;">Enter JSON/XML file to upload:</p>
 
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" name="file" class="custom-file-input" id="inputGroupFile02"
+                            accept=".xml,.json">
+                        <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                        <button type="button" onlick="showStatusOfOperations()" class="input-group-text"
+                            class="btn btn-danger">Upload</button>
+
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
         <p>Status of Order: <span id="status">Completed</span></p>
