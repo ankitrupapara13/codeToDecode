@@ -1,32 +1,6 @@
 <%@page import="com.hsbc.dto.ProductFileDTO"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<!--  <!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-	<%@ include file="importProducts.html" %>
-<form >
-                <p style="color: black;">Enter JSON/XML file to upload:</p>
-
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" name="file" class="custom-file-input" id="file-input"
-                            accept=".xml,.json">
-                        <label class="custom-file-label" for="file-input">Choose file</label>
-                    </div>
-                    <div class="input-group-append">
-                        <button id="file-submit" class="input-group-text"
-                            class="btn btn-danger">Upload</button>
-
-                    </div>
-                </div>
-            </form>
-</body>
-</html>-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -119,14 +93,7 @@
               console.log(input.files[0]);
               var data = new FormData();
               data.append('file', input.files[0]);
-              var xhr = new XMLHttpRequest();
-            /*  xhr.onreadystatechange = function () {
-                  if (xhr.readyState == 4 && xhr.status == 200) {
-                      document.getElementById("displayinvoice").innerHTML = xhr.responseText;
-                  }
-              }
-              xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
-              xhr.send(data);*/
+          
              fetch('http://localhost:8090/orderProcessing/product', {
                   method: 'POST',
                   headers:{
