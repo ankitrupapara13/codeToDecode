@@ -31,14 +31,14 @@
         </div>
         <div class="row">
 
-            <form >
+            <form id="file-form">
                 <p style="color: black;">Enter JSON/XML file to upload:</p>
 
                 <div class="input-group mb-3">
                     <div class="custom-file">
                         <input type="file" name="file" class="custom-file-input" id="file-input"
                             accept=".xml,.json">
-                        <label class="custom-file-label" for="file-input">Choose file</label>
+                        <label id="file-input-label" class="custom-file-label" for="file-input">Choose file</label>
                     </div>
                     <div class="input-group-append">
                         <button id="file-submit" class="input-group-text"
@@ -64,24 +64,32 @@
         </footer>
     </div>
 	<script>
-     
+		document.getElementById('file-input').onchange = function(){
+	        document.getElementById('file-input-label').innerHTML = this.files[0].name;
+	    }
         document.getElementById('file-submit').addEventListener('click', function (event){
-        	  event.preventDefault();
-          		var input = document.getElementById('file-input');
+        	event.preventDefault();
+          	var input = document.getElementById('file-input');
+            if(input.files.length == 0){
+            	alert('Please select a file');
+            	document.getElementById("file-upload-information").innerHTML = "";
+            	return;
+            }
             
-              var data = new FormData();
-              data.append('file', input.files[0]);
+            var data = new FormData();
+            data.append('file', input.files[0]);
           	        	
-             var xhr = new XMLHttpRequest();
-             xhr.onreadystatechange = function () {
-                 if (xhr.readyState == 4 && xhr.status == 200) {
-                     document.getElementById("file-upload-information").innerHTML = xhr.responseText;
-                 }
-             }	
-             xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
-             xhr.send(data);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("file-upload-information").innerHTML = xhr.responseText;
+                }
+                document.getElementById('file-input-label').innerHTML = 'Choose file';
+                document.getElementById('file-form').reset();
+            }	
+            xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
+            xhr.send(data);
              
-             // .then(data => console.log(data))
         })
  
     </script>
