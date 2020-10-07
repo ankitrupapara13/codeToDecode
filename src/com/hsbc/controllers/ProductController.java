@@ -56,12 +56,8 @@ public class ProductController extends HttpServlet {
 		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
 		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
 		request.setAttribute("productFileResponse", productFileDTO);
-//		PrintWriter out = response.getWriter();
-//		out.print("<p>Status of Order: <span id=\"status\">Completed</span></p>");
-//		out.print("<p>Number of products added<span id=\"numProducts\">"+ productFileDTO.getSuccessCount() +"</span></p>");
-//		out.print("<p>Number of products failed:<span id=\"numProducts\">"+ productFileDTO.getFailedCount()+"</span></p>");
+
 		request.getRequestDispatcher("./importProducts.jsp").forward(request, response);
-//		doGet(request, response);
 		
 	}
 
