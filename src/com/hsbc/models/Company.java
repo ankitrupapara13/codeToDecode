@@ -86,18 +86,24 @@ public class Company {
 	
 	
 	
+	
 	/**
 	 * @param companyName
 	 * @param companyAddress
 	 * @param companyCity
 	 * @param gstNumber
+	 * @param createdAt
+	 * @param updatedAt
 	 */
-	public Company(String companyName, String companyAddress, String companyCity, String gstNumber) {
+	public Company(String companyName, String companyAddress, String companyCity, String gstNumber, Time createdAt,
+			Time updatedAt) {
 		super();
 		this.companyName = companyName;
 		this.companyAddress = companyAddress;
 		this.companyCity = companyCity;
 		this.gstNumber = gstNumber;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 	/**
 	 * 
