@@ -5,30 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import Products</title>
-    <script>
-        /*function showStatusOfOperations() {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("displayinvoice").innerHTML = xhr.responseText;
-                }
-            }
-            xhr.open('GET', './demo', true);
-            xhr.send();
-        }*/
-        document.getElementById('file-submit', uploadFile)
-        function uploadFile(e){
-            e.preventDefault();
-            var input = document.getElementById('file-input');
-            console.log(input.files[0]);
-            var data = new FormData();
-            data.append('file', input.files[0]);
-            fetch('http://localhost:8090/orderProcessing/product', {
-                method: 'POST',
-                body: data
-            })
-        }
-    </script>
+    
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
     <link rel="stylesheet" type="text/css" href="importProducts.css">
 </head>
@@ -54,7 +31,7 @@
         </div>
         <div class="row">
 
-            <form W>
+            <form >
                 <p style="color: black;">Enter JSON/XML file to upload:</p>
 
                 <div class="input-group mb-3">
@@ -71,10 +48,9 @@
                 </div>
             </form>
         </div>
-
-        <p>Status of Order: <span id="status">Completed</span></p>
-        <p>Number of products imported:<span id="numProducts">2</span></p>
-        <p>Number of products not imported:<span id="numProdNotImp">1</span></p><br>
+        <div id="file-upload-information">
+		
+    	</div>
 
     </div>
 
@@ -87,7 +63,28 @@
             <br>
         </footer>
     </div>
-
+	<script>
+     
+        document.getElementById('file-submit').addEventListener('click', function (event){
+        	  event.preventDefault();
+          		var input = document.getElementById('file-input');
+            
+              var data = new FormData();
+              data.append('file', input.files[0]);
+          	        	
+             var xhr = new XMLHttpRequest();
+             xhr.onreadystatechange = function () {
+                 if (xhr.readyState == 4 && xhr.status == 200) {
+                     document.getElementById("file-upload-information").innerHTML = xhr.responseText;
+                 }
+             }	
+             xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
+             xhr.send(data);
+             
+             // .then(data => console.log(data))
+        })
+ 
+    </script>
 </body>
 
 </html>

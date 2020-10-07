@@ -1,6 +1,9 @@
 package com.hsbc.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.hsbc.dto.ProductFileDTO;
 import com.hsbc.service.ProductService;
+
+import javafx.beans.value.WritableBooleanValue;
 
 /**
  * Servlet implementation class ProductController
@@ -50,8 +55,13 @@ public class ProductController extends HttpServlet {
 		// TODO Auto-generated method stub
 		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
 		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
-		request.getServletContext().setAttribute("productFileResponse", productFileDTO);
-		doGet(request, response);
+		request.setAttribute("productFileResponse", productFileDTO);
+//		PrintWriter out = response.getWriter();
+//		out.print("<p>Status of Order: <span id=\"status\">Completed</span></p>");
+//		out.print("<p>Number of products added<span id=\"numProducts\">"+ productFileDTO.getSuccessCount() +"</span></p>");
+//		out.print("<p>Number of products failed:<span id=\"numProducts\">"+ productFileDTO.getFailedCount()+"</span></p>");
+		request.getRequestDispatcher("./importProducts.jsp").forward(request, response);
+//		doGet(request, response);
 		
 	}
 
