@@ -5,18 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import Products</title>
-    <script>
-        function showStatusOfOperations() {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("displayinvoice").innerHTML = xhr.responseText;
-                }
-            }
-            xhr.open('POST', './product', true);
-            xhr.send();
-        }
-    </script>
+    
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
     <link rel="stylesheet" type="text/css" href="importProducts.css">
 </head>
@@ -42,40 +31,67 @@
         </div>
         <div class="row">
 
-            <form>
+            <form id="file-form">
                 <p style="color: black;">Enter JSON/XML file to upload:</p>
 
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        <input type="file" name="file" class="custom-file-input" id="inputGroupFile02"
+                        <input type="file" name="file" class="custom-file-input" id="file-input"
                             accept=".xml,.json">
-                        <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                        <label id="file-input-label" class="custom-file-label" for="file-input">Choose file</label>
                     </div>
                     <div class="input-group-append">
-                        <button type="button" onlick="showStatusOfOperations()" class="input-group-text"
+                        <button id="file-submit" class="input-group-text"
                             class="btn btn-danger">Upload</button>
 
                     </div>
                 </div>
             </form>
         </div>
-
-        <p>Status of Order: <span id="status">Completed</span></p>
-        <p>Number of products imported:<span id="numProducts">2</span></p>
-        <p>Number of products not imported:<span id="numProdNotImp">1</span></p><br>
+        <div id="file-upload-information">
+		
+    	</div>
 
     </div>
 
     <br>
-    <div class="navbar navbar-dark bg-dark">
+    <div class="navbar navbar-dark bg-dark footer-content-outer-div">
         <footer>
-            <br>
-            <strong><b><u><span style="color: black;">CONTENT CREATORS: WFS7-codeToDecode</span></strong></u></b>
-            <div></div>
-            <br>
+            <div class="footer-text">
+               Copyright &#169; 2020 | CodeFury | codeToDecode | All rights reserved | Handcrafted with ❤️
+            </div>
         </footer>
     </div>
-
+	<script>
+		document.getElementById('file-input').onchange = function(){
+	        document.getElementById('file-input-label').innerHTML = this.files[0].name;
+	    }
+        document.getElementById('file-submit').addEventListener('click', function (event){
+        	event.preventDefault();
+          	var input = document.getElementById('file-input');
+            if(input.files.length == 0){
+            	alert('Please select a file');
+            	document.getElementById("file-upload-information").innerHTML = "";
+            	return;
+            }
+            
+            var data = new FormData();
+            data.append('file', input.files[0]);
+          	        	
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("file-upload-information").innerHTML = xhr.responseText;
+                }
+                document.getElementById('file-input-label').innerHTML = 'Choose file';
+                document.getElementById('file-form').reset();
+            }	
+            xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
+            xhr.send(data);
+             
+        })
+ 
+    </script>
 </body>
 
 </html>
