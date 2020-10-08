@@ -23,4 +23,14 @@ body {
   #h{
     border: 2px solid red;
   }
+  .footer-content-outer-div{
+  	justify-content: center;
+  }
+  .footer-text{
+  	margin-top:20px;
+  	color: #ffffff;
+  	margin-bottom:20px;
+  	font-size: 12px;
+    font-weight: 600;
+  }
 
