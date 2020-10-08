@@ -20,7 +20,7 @@ public interface OrderProcessingDAO {
 
 	Customer getCustomerById(int customerId) throws CustomerNotFoundException;
 
-	List<Product> getProductByProductId(int[] productIds) throws ProductNotFoundException, CompanyNotFoundException;
+	List<Product> getProductByProductIds(int[] productIds) throws ProductNotFoundException, CompanyNotFoundException;
 
 	List<OrderDetails> getOrdersOfEmployee(int employeeId) throws OrderNotFoundForEmployee, ProductNotFoundException;
 
@@ -28,17 +28,20 @@ public interface OrderProcessingDAO {
 
 	void addProductsToDB(Product products[]);
 
+	List<Product> getProducts() throws ProductNotFoundException, CompanyNotFoundException;
+	
 	OrderDetails addOrdertoDB(OrderDetails orderDetails);
 
 	OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException;
 
-	OrderDetails completeOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException; // CRON Job
+	List<OrderDetails> completeOrder() throws OrderNotFoundForEmployee, ProductNotFoundException; // CRON Job
 
-	OrderDetails expiryOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException; // CRON Job
+	List<OrderDetails> expiryOrder() throws OrderNotFoundForEmployee, ProductNotFoundException; // CRON Job
 
-	OrderDetails orderFetcher(int orderId, OrderProcessingDAOImpl emImpl)
+	OrderDetails orderFetcher(int orderId)
 			throws OrderNotFoundForEmployee, ProductNotFoundException; // Order Fetcher is working behind the scenes to
 																	// fetch OrderDetails object for approveOrder,
 																	// completeOrder, expiryOrder
 
+	
 }

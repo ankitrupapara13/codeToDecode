@@ -8,9 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
 
-
+import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.exceptions.CompanyNotFoundException;
+import com.hsbc.exceptions.CustomerNotFoundException;
 import com.hsbc.exceptions.OrderNotFoundForEmployee;
 import com.hsbc.exceptions.ProductNotFoundException;
 import com.hsbc.models.Company;
@@ -19,10 +20,11 @@ import com.hsbc.models.Product;
 
 public class Caller {
 
-	
-	public static void main(String[] args){
-		OrderProcessingDAOImpl emImpl = OrderProcessingDAOImpl.getInstance();
-//		String query = "INSERT INTO APP.ORDERDETAILS VALUES(?,?,?,?,?,?,?,?,?,?)";
+	public static void main(String[] args) {
+		
+		OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
+
+		//		String query = "INSERT INTO APP.ORDERDETAILS VALUES(?,?,?,?,?,?,?,?,?,?)";
 //		String queryOrderProduct = "INSERT INTO APP.ORDERPRODUCTS VALUES(?,?)";
 //		Time t = new Time(10);
 //		ArrayList<Product> alProducts = new ArrayList<Product>();
@@ -79,15 +81,38 @@ public class Caller {
 //		
 //		emImpl.addProductsToDB(p);
 //		
+//		try {
+//			System.out.println(emImpl.getOrdersOfEmployee(104));
+//		} catch (OrderNotFoundForEmployee | ProductNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			System.out.println(e.getMessage());
+//		}
+
+//		System.out.println("Products : " + emImpl.getProductByProductId(new int[]{1, 3}));
+//
+//		try {
+//			System.out.println(emImpl.getCustomerById(103));
+//			System.out.println("invoice : "+ emImpl.getInvoiceByOrderId(55556));
+//			System.out.println(emImpl.getProducts());
+//			
+//			System.out.println(emImpl.approveOrder(55557));
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			System.out.println(e.getMessage());
+//		
+//		}
+		
 		try {
-			System.out.println(emImpl.getOrdersOfEmployee(104));
-		} catch (OrderNotFoundForEmployee | ProductNotFoundException e) {
+			System.out.println("invoice : "+ emImpl.getInvoiceByOrderId(55556));
+//			System.out.println("Exp : " + emImpl.completeOrder());
+		} catch (OrderNotFoundForEmployee e) {
 			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
+			e.printStackTrace();
+		} catch (ProductNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-//		System.out.println("Products : " + emImpl.getProductByProductId(new int[]{1, 3}));
-		
 	}
-
 }
