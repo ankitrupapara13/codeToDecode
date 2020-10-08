@@ -86,6 +86,24 @@ public class Employee {
 	
 	
 	
+	
+	/**
+	 * @param employeeId
+	 * @param userName
+	 * @param password
+	 * @param lastLogin
+	 * @param createdAt
+	 * @param updatedAt
+	 */
+	public Employee(int employeeId, String userName, String password, Time lastLogin, Time createdAt, Time updatedAt) {
+		super();
+		this.employeeId = employeeId;
+		this.userName = userName;
+		this.password = password;
+		this.lastLogin = lastLogin;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
 	/**
 	 * @param employeeId
 	 * @param userName
