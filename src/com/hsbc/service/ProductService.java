@@ -3,6 +3,10 @@ package com.hsbc.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.Part;
 import javax.xml.parsers.DocumentBuilder;
@@ -19,17 +23,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.hsbc.dao.OrderProcessingDAO;
+import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.dto.ProductFileDTO;
 import com.hsbc.exceptions.InputStreamEmptyException;
 import com.hsbc.exceptions.InvalidFileFormatException;
+import com.hsbc.models.Company;
 import com.hsbc.models.Product;
 
 
 public class ProductService {
-//	private ProductDAO productDAO;
+	private OrderProcessingDAO productDAO;
 	
 	public ProductService() {
-//		productDAO = new ProductDAOImpl();
+		productDAO = new OrderProcessingDAOImpl();
 	
 	}
 	/*
@@ -105,7 +112,7 @@ public class ProductService {
 		int failedCount = 0;
 		
 		NodeList nodeList = document.getDocumentElement().getChildNodes();
-		
+		List<Product> products = new ArrayList<Product>();
 		for(int i = 0; i < nodeList.getLength(); i++) {
 			
 			Node node = nodeList.item(i);
@@ -115,12 +122,22 @@ public class ProductService {
 				Product product = processXMLObject(node);
 				if(product == null)
 					failedCount++;
-				else 
+				else {
 					successCount++;
+					products.add(product);
+				}
 //				productDAO.addProductsToDB(product);
 				
 			}
 		}
+		Product[] productsArr = new Product[products.size()];
+		int i = 0;
+		for(Product product: products) {
+			productsArr[i] = product;
+			i++;
+		}
+		productDAO.addProductsToDB(productsArr);
+		
 		System.out.println("Success Count: " + successCount);
 		System.out.println("Failure Count: " + failedCount);
 		ProductFileDTO productFileDTO = new ProductFileDTO(successCount, failedCount);
@@ -136,8 +153,9 @@ public class ProductService {
 		int productId = 0;
 		String productName = "";
 		double productPrice = 0;
-		int productCategoryId = 0;
-		int companyId = 0;
+		String productCategory = "";
+		String gstNumber = "";
+	
 		try {
 			productId  = Integer.parseInt(element.getElementsByTagName("ProductId")
 											.item(0).getChildNodes().item(0).getNodeValue());
@@ -145,19 +163,21 @@ public class ProductService {
 											.item(0).getChildNodes().item(0).getNodeValue();
 			productPrice = Double.parseDouble(element.getElementsByTagName("ProductPrice")
 											.item(0).getChildNodes().item(0).getNodeValue());
-			productCategoryId = Integer.parseInt(element.getElementsByTagName("ProductCategoryId")
-											.item(0).getChildNodes().item(0).getNodeValue());
-			companyId = Integer.parseInt(element.getElementsByTagName("CompanyId")
-										.item(0).getChildNodes().item(0).getNodeValue());
+			productCategory = element.getElementsByTagName("ProductCategory")
+											.item(0).getChildNodes().item(0).getNodeValue();
+			gstNumber = element.getElementsByTagName("GstNumber")
+										.item(0).getChildNodes().item(0).getNodeValue();
 		}catch(NullPointerException e) {
 			return null;
 		}
-		if(productId <= 0 || productName == null || productPrice <= 0 || productCategoryId <= 0 || companyId <= 0)
+		if(productId <= 0 || productName == null || productName == "" || productCategory==null || productCategory=="" || productPrice <= 0 )
 			return null;
 		
-		System.out.println("[ " + productId + ", " + productName + ", " + productPrice + ", " + productCategoryId + ", " + companyId + " ]");
+		System.out.println("[ " + productId + ", " + productName + ", " + productPrice + ", " + productCategory + ", " + gstNumber + " ]");
+		Company company = new Company();
+		company.setGstNumber(gstNumber);
+		Product productObj = new Product((int)productId, productName, productPrice, productCategory, company, new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()));
 		
-		Product productObj = new Product((int)productId, productName, productPrice, (int)productCategoryId);
 		return productObj;
 		
 	}
@@ -181,15 +201,26 @@ public class ProductService {
 		InputStreamReader inputStreamReader = new InputStreamReader(inputstream);
 		Object obj = parser.parse(inputStreamReader);
 		JSONArray json = (JSONArray)obj;
-		
+		List<Product> products = new ArrayList<Product>();
 		for(Object product : json) {
 			Product productObj = this.processJSONObject((JSONObject)product);
+			
 			if(productObj == null)
 				failedCount++;
-			else
+			else {
 				successCount++;
-//			productDAO.addProductsToDB(product)
+				products.add(productObj);
+			}
+
 		}
+		Product[] productsArr = new Product[products.size()];
+		int i = 0;
+		for(Product product: products) {
+			productsArr[i] = product;
+			i++;
+		}
+		productDAO.addProductsToDB(productsArr);
+		
 		System.out.println("Success Count: " + successCount);
 		System.out.println("Failure Count: " + failedCount);
 		
@@ -206,23 +237,24 @@ public class ProductService {
 		long productId = 0;
 		String productName = "";
 		double productPrice = 0;
-		long productCategoryId = 0;
-		long companyId = 0;
+		String productCategory = "";
+		String gstNumber = "";
 		try {
 			productId = (Long)product.get("productId");
 			productName = (String)product.get("productName");
 			productPrice = (Double)product.get("productPrice");
-			productCategoryId = (Long)product.get("productCategoryId");
-			companyId = (Long)product.get("companyId");
-		}catch(NullPointerException e) {
+			productCategory = (String)product.get("productCategory");
+			gstNumber = (String)product.get("gstNumber");
+		}catch(Exception e) {
 			return null;
 		}
-		if(productId <= 0 || productName == null || productPrice <= 0 || productCategoryId <= 0 || companyId <= 0)
+		if(productId <= 0 || productName == null || productPrice <= 0 || productCategory == null || productCategory == "" || gstNumber == null || gstNumber == "")
 			return null;
 		
-		System.out.println("[ " + productId + ", " + productName + ", " + productPrice + ", " + productCategoryId + ", " + companyId + " ]");
-		
-		Product productObj = new Product((int)productId, productName, productPrice, (int)productCategoryId);
+		System.out.println("[ " + productId + ", " + productName + ", " + productPrice + ", " + productCategory + ", " + gstNumber + " ]");
+		Company company = new Company();
+		company.setGstNumber(gstNumber);
+		Product productObj = new Product((int)productId, productName, productPrice, productCategory, company, new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()));
 		return productObj;
 		
 	}
