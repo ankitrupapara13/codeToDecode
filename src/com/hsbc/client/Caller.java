@@ -2,7 +2,7 @@ package com.hsbc.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.sql.Date;
 import java.util.stream.Collectors;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -15,6 +15,7 @@ import com.hsbc.exceptions.CustomerNotFoundException;
 import com.hsbc.exceptions.OrderNotFoundForEmployee;
 import com.hsbc.exceptions.ProductNotFoundException;
 import com.hsbc.models.Company;
+import com.hsbc.models.Invoice;
 import com.hsbc.models.OrderDetails;
 import com.hsbc.models.Product;
 
@@ -104,15 +105,16 @@ public class Caller {
 //		}
 		
 		try {
-			System.out.println("invoice : "+ emImpl.getInvoiceByOrderId(55556));
+//			System.out.println("invoice : "+ emImpl.getOrdersOfEmployee(104));
 //			System.out.println("Exp : " + emImpl.completeOrder());
-		} catch (OrderNotFoundForEmployee e) {
+			System.out.println("products : " + emImpl.getProducts());
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
 			e.printStackTrace();
-		} catch (ProductNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
+		
+//		System.out.println(emImpl.addInvoiceToDB(new Invoice(new OrderDetails(55556, new Date(0, 0, 0), 103, 104, 1321.56, 50.01, "EKART", "PENDING", new Time(0, 0, 0), new Time(0, 0, 0)), 101, new Date(0, 0, 0), "INTER STATE", 1052.16, 649464.65, "UNPAID", new Time(0, 0, 0), new Time(0, 0, 0))));
 		
 	}
 }

@@ -6,6 +6,7 @@ import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.exceptions.CompanyNotFoundException;
 import com.hsbc.exceptions.CustomerNotFoundException;
 import com.hsbc.exceptions.EmployeeNotFoundException;
+import com.hsbc.exceptions.InvoiceNotFoundException;
 import com.hsbc.exceptions.OrderNotFoundForEmployee;
 import com.hsbc.exceptions.ProductNotFoundException;
 import com.hsbc.models.Customer;
@@ -22,11 +23,11 @@ public interface OrderProcessingDAO {
 
 	List<Product> getProductByProductIds(int[] productIds) throws ProductNotFoundException, CompanyNotFoundException;
 
-	List<OrderDetails> getOrdersOfEmployee(int employeeId) throws OrderNotFoundForEmployee, ProductNotFoundException;
+	List<OrderDetails> getOrdersOfEmployee(int employeeId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException;
 
 	Invoice addInvoiceToDB(Invoice invoice) ;
 	
-	Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException;
+	Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException;
 
 	void addProductsToDB(Product products[]);
 
