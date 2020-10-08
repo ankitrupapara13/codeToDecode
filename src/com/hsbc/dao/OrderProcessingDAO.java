@@ -24,6 +24,8 @@ public interface OrderProcessingDAO {
 
 	List<OrderDetails> getOrdersOfEmployee(int employeeId) throws OrderNotFoundForEmployee, ProductNotFoundException;
 
+	Invoice addInvoiceToDB(Invoice invoice) ;
+	
 	Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException;
 
 	void addProductsToDB(Product products[]);

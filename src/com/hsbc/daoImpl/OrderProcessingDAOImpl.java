@@ -233,6 +233,13 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override
+	public Invoice addInvoiceToDB(Invoice invoice) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	@Override
 	public Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
 		// TODO Auto-generated method stub
 
@@ -577,5 +584,6 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		}
 		return null;
 	}
+
 
 }
