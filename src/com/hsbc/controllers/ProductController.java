@@ -1,6 +1,9 @@
 package com.hsbc.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -8,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hsbc.dto.ProductFileDTO;
 import com.hsbc.service.ProductService;
+
+import javafx.beans.value.WritableBooleanValue;
 
 /**
  * Servlet implementation class ProductController
@@ -38,7 +44,8 @@ public class ProductController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+//		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.sendRedirect("./importProducts.jsp");
 	}
 
 	/**
@@ -46,8 +53,12 @@ public class ProductController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		productService.addProduct(request.getPart("file"));
-//		doGet(request, response);
+		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
+		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
+		request.setAttribute("productFileResponse", productFileDTO);
+
+		request.getRequestDispatcher("./importProducts.jsp").forward(request, response);
+		
 	}
 
 }
