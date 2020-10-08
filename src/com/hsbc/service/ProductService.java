@@ -117,7 +117,7 @@ public class ProductService {
 					failedCount++;
 				else 
 					successCount++;
-//				productDAO.addProductsToDB(product)
+//				productDAO.addProductsToDB(product);
 				
 			}
 		}

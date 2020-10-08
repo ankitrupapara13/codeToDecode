@@ -1,0 +1,3 @@
+INFO    2020-10-09 01:31:36,760 [http-nio-8090-exec-6] com.hsbc.controllers.ProductController  - /product request received
+INFO    2020-10-09 01:32:55,394 [http-nio-8090-exec-7] com.hsbc.controllers.ProductController  - /product request received
+INFO    2020-10-09 01:34:21,236 [http-nio-8090-exec-1] com.hsbc.controllers.ProductController  - /product request received
