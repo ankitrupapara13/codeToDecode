@@ -11,7 +11,7 @@
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("displayquote").innerHTML = xhr.responseText;
+                    document.getElementById("displayQuote").innerHTML = xhr.responseText;
                 }
             }
             xhr.open('GET', './demo', true);
@@ -80,7 +80,7 @@
                         <td id="orderValue">22000</td>
                         <td id="status">Completed</td>
                         <td id="invoice"><a href="displayQuote.html" target="_blank"><button type="button"
-                                    onlick="onLoad()" class="btn btn-danger">View Invoice</button></a></td>
+                                    class="btn btn-danger">View Invoice</button></a></td>
 
                     </tr>
 
@@ -92,7 +92,7 @@
                         <td id="orderValue">22000</td>
                         <td id="status">Approved</td>
                         <td id="invoice"><a href="displayQuote.html" target="_blank">
-                                <button" onlick="onLoad()" class="btn btn-danger">View Invoice</button>
+                                <button type="button" class="btn btn-danger">View Invoice</button>
                             </a></td>
 
                     </tr>
@@ -105,7 +105,7 @@
                         <td id="orderValue">22000</td>
                         <td id="status">Approved</td>
                         <td id="invoice"><a href="displayQuote.html" target="_blank"><button type="button"
-                                    onlick="onLoad()" class="btn btn-danger">View Invoice</button></a></td>
+                                    class="btn btn-danger">View Invoice</button></a></td>
 
                     </tr>
                 </tbody>
@@ -135,7 +135,7 @@
                     <td id="orderDate">01/10/20</td>
                     <td id="shippingCost">2000</td>
                     <td id="orderValue">22000</td>
-                    <td id="approve"><a href="displayQuote.html" target=_blank><button type="button" id="displayquote"
+                    <td id="approve"><a href="displayQuote.html" target=_blank><button type="button" id="displayQuote"
                                 onlick="toApprove()" class="btn btn-success">Approve</button></a> </td>
 
                 </tr>
@@ -146,7 +146,7 @@
                     <td id="orderDate">01/10/20</td>
                     <td id="shippingCost">2000</td>
                     <td id="orderValue">22000</td>
-                    <td id="approve"><a href="displayQuote.html" target=_blank><button type="button" id="displayquote"
+                    <td id="approve"><a href="displayQuote.html" target=_blank><button type="button" id="displayQuote"
                                 onlick="toApprove()" class="btn btn-success">Approve</button></a> </td>
 
                 </tr>
@@ -157,27 +157,23 @@
                     <td id="orderDate">01/10/20</td>
                     <td id="shippingCost">2000</td>
                     <td id="orderValue">22000</td>
-                    <td id="approve"><a href="displayQuote.html" target=_blank><button type="button" id="displayquote"
+                    <td id="approve"><a href="displayQuote.html" target=_blank><button type="button" id="displayQuote"
                                 onlick="toApprove()" class="btn btn-success">Approve</button></a> </td>
 
                 </tr>
 
             </table>
         </div>
-
-
-
-
     </div>
 
-    <div class="navbar navbar-dark bg-dark">
+    <div class="navbar navbar-dark bg-dark footer-content-outer-div">
         <footer>
-            <br>
-            <strong><b><u><span style="color: black;">CONTENT CREATORS: WFS7-codeToDecode</span></strong></u></b>
-            <div></div>
-            <br>
+            <div class="footer-text">
+               Copyright &#169; 2020 | CodeFury | codeToDecode | All rights reserved | Handcrafted with ❤️
+            </div>
         </footer>
     </div>
+
 </body>
 
 </html>
