@@ -1,20 +1,52 @@
 package com.hsbc.models;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 
-public class Invoice {
+public class Invoice  {
 
 	private int invoiceId;
 	private Date invoiceDate;
-	private int orderId;
-	private int customerId;
-	private int gstTypeId; // 0 -> inter state, 1 -> same state
+	private OrderDetails orderDetails ;
+//	private int orderId; // extended from OrderDetails table
+//	private int customerId;
+	private String gstType; // 0 -> inter state, 1 -> same state
 	private double gstAmount;
 	private double totalInvoiceAmount;
-	private boolean status; // 0 -> fail, 1 -> done
-	private Time createdAt;
-	private Time updatedAt;
+	private String invoiceStatus; // 0 -> unpaid, 1 -> paid
+	private Time invoiceCreatedAt;
+	private Time invoiceUpdatedAt;
+	/**
+	 * @param invoiceId
+	 * @param invoiceDate
+	 * @param orderDetails
+	 * @param gstAmount
+	 * @param totalInvoiceAmount
+	 * @param invoiceStatus
+	 * @param invoiceCreatedAt
+	 * @param invoiceUpdatedAt
+	 */
+	public Invoice(OrderDetails orderDetails, int invoiceId, Date invoiceDate, String gstType, double gstAmount,
+			double totalInvoiceAmount, String invoiceStatus, Time invoiceCreatedAt, Time invoiceUpdatedAt) {
+		super();
+		this.invoiceId = invoiceId;
+		this.invoiceDate = invoiceDate;
+		this.orderDetails = orderDetails;
+		this.gstType = gstType;
+		this.gstAmount = gstAmount;
+		this.totalInvoiceAmount = totalInvoiceAmount;
+		this.invoiceStatus = invoiceStatus.toUpperCase();
+		this.invoiceCreatedAt = invoiceCreatedAt;
+		this.invoiceUpdatedAt = invoiceUpdatedAt;
+	}
+	/**
+	 * 
+	 */
+	public Invoice() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	/**
 	 * @return the invoiceId
 	 */
@@ -40,40 +72,28 @@ public class Invoice {
 		this.invoiceDate = invoiceDate;
 	}
 	/**
-	 * @return the orderId
+	 * @return the orderDetails
 	 */
-	public int getOrderId() {
-		return orderId;
+	public OrderDetails getOrderDetails() {
+		return orderDetails;
 	}
 	/**
-	 * @param orderId the orderId to set
+	 * @param orderDetails the orderDetails to set
 	 */
-	public void setOrderId(int orderId) {
-		this.orderId = orderId;
+	public void setOrderDetails(OrderDetails orderDetails) {
+		this.orderDetails = orderDetails;
 	}
 	/**
-	 * @return the customerId
+	 * @return the gstType
 	 */
-	public int getCustomerId() {
-		return customerId;
+	public String getGstType() {
+		return gstType;
 	}
 	/**
-	 * @param customerId the customerId to set
+	 * @param gstType the gstType to set
 	 */
-	public void setCustomerId(int customerId) {
-		this.customerId = customerId;
-	}
-	/**
-	 * @return the gstTypeId
-	 */
-	public int getGstTypeId() {
-		return gstTypeId;
-	}
-	/**
-	 * @param gstTypeId the gstTypeId to set
-	 */
-	public void setGstTypeId(int gstTypeId) {
-		this.gstTypeId = gstTypeId;
+	public void setGstType(String gstType) {
+		this.gstType = gstType;
 	}
 	/**
 	 * @return the gstAmount
@@ -84,7 +104,7 @@ public class Invoice {
 	/**
 	 * @param gstAmount the gstAmount to set
 	 */
-	public void setGstAmount(float gstAmount) {
+	public void setGstAmount(double gstAmount) {
 		this.gstAmount = gstAmount;
 	}
 	/**
@@ -96,76 +116,56 @@ public class Invoice {
 	/**
 	 * @param totalInvoiceAmount the totalInvoiceAmount to set
 	 */
-	public void setTotalInvoiceAmount(float totalInvoiceAmount) {
+	public void setTotalInvoiceAmount(double totalInvoiceAmount) {
 		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	/**
-	 * @return the status
+	 * @return the invoiceStatus
 	 */
-	public boolean isStatus() {
-		return status;
+	public String getInvoiceStatus() {
+		return invoiceStatus.toUpperCase();
 	}
 	/**
-	 * @param status the status to set
+	 * @param invoiceStatus the invoiceStatus to set
 	 */
-	public void setStatus(boolean status) {
-		this.status = status;
+	public void setInvoiceStatus(String invoiceStatus) {
+		this.invoiceStatus = invoiceStatus.toUpperCase();
 	}
 	/**
-	 * @return the createdAt
+	 * @return the invoiceCreatedAt
 	 */
-	public Time getCreatedAt() {
-		return createdAt;
+	public Time getInvoiceCreatedAt() {
+		return invoiceCreatedAt;
 	}
 	/**
-	 * @param createdAt the createdAt to set
+	 * @param invoiceCreatedAt the invoiceCreatedAt to set
 	 */
-	public void setCreatedAt(Time createdAt) {
-		this.createdAt = createdAt;
+	public void setInvoiceCreatedAt(Time invoiceCreatedAt) {
+		this.invoiceCreatedAt = invoiceCreatedAt;
 	}
 	/**
-	 * @return the updatedAt
+	 * @return the invoiceUpdatedAt
 	 */
-	public Time getUpdatedAt() {
-		return updatedAt;
+	public Time getInvoiceUpdatedAt() {
+		return invoiceUpdatedAt;
 	}
 	/**
-	 * @param updatedAt the updatedAt to set
+	 * @param invoiceUpdatedAt the invoiceUpdatedAt to set
 	 */
-	public void setUpdatedAt(Time updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setInvoiceUpdatedAt(Time invoiceUpdatedAt) {
+		this.invoiceUpdatedAt = invoiceUpdatedAt;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Invoice [invoiceId=" + invoiceId + ", invoiceDate=" + invoiceDate + ", orderDetails=" + orderDetails
+				+ ", gstType=" + gstType + ", gstAmount=" + gstAmount + ", totalInvoiceAmount=" + totalInvoiceAmount
+				+ ", invoiceStatus=" + invoiceStatus + ", invoiceCreatedAt=" + invoiceCreatedAt + ", invoiceUpdatedAt="
+				+ invoiceUpdatedAt + "]";
 	}
 	
-	/**
-	 * @param invoiceId
-	 * @param invoiceDate
-	 * @param orderId
-	 * @param customerId
-	 * @param gstTypeId
-	 * @param gstAmount
-	 * @param totalInvoiceAmount
-	 * @param status
-	 */
-	public Invoice(int invoiceId, Date invoiceDate, int orderId, int customerId, int gstTypeId, double gstAmount,
-			double totalInvoiceAmount, boolean status) {
-		super();
-		this.invoiceId = invoiceId;
-		this.invoiceDate = invoiceDate;
-		this.orderId = orderId;
-		this.customerId = customerId;
-		this.gstTypeId = gstTypeId;
-		this.gstAmount = gstAmount;
-		this.totalInvoiceAmount = totalInvoiceAmount;
-		this.status = status;
-	}
-	/**
-	 * 
-	 */
-	public Invoice() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	
 	
 }

@@ -1,13 +1,15 @@
 package com.hsbc.models;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 public class Product {
 
 	private int productId;
 	private String productName;
 	private double productPrice;
-	private int productCategoryId;
+	private String productCategory;
+	private Company company;
 	private Time createdAt;
 	private Time updatedAt;
 	/**
@@ -43,20 +45,32 @@ public class Product {
 	/**
 	 * @param productPrice the productPrice to set
 	 */
-	public void setProductPrice(float productPrice) {
+	public void setProductPrice(double productPrice) {
 		this.productPrice = productPrice;
 	}
 	/**
-	 * @return the productCategoryId
+	 * @return the productCategory
 	 */
-	public int getProductCategoryId() {
-		return productCategoryId;
+	public String getProductCategory() {
+		return productCategory;
 	}
 	/**
-	 * @param productCategoryId the productCategoryId to set
+	 * @param productCategory the productCategory to set
 	 */
-	public void setProductCategoryId(int productCategoryId) {
-		this.productCategoryId = productCategoryId;
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
+	}
+	/**
+	 * @return the company
+	 */
+	public Company getCompany() {
+		return company;
+	}
+	/**
+	 * @param company the company to set
+	 */
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 	/**
 	 * @return the createdAt
@@ -82,19 +96,25 @@ public class Product {
 	public void setUpdatedAt(Time updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
 	/**
 	 * @param productId
 	 * @param productName
 	 * @param productPrice
-	 * @param productCategoryId
+	 * @param productCategory
+	 * @param company
+	 * @param createdAt
+	 * @param updatedAt
 	 */
-	public Product(int productId, String productName, double productPrice, int productCategoryId) {
+	public Product(int productId, String productName, double productPrice, String productCategory, Company company,
+			Time createdAt, Time updatedAt) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.productPrice = productPrice;
-		this.productCategoryId = productCategoryId;
+		this.productCategory = productCategory;
+		this.company = company;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 	/**
 	 * 
@@ -103,6 +123,16 @@ public class Product {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Product [productId=" + productId + ", productName=" + productName + ", productPrice=" + productPrice
+				+ ", productCategory=" + productCategory + ", company=" + company + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + "]";
+	}
+	
 	
 	
 }
