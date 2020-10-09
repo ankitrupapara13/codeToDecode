@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.hsbc.dto.ProductFileDTO;
 import com.hsbc.service.ProductService;
-
-import javafx.beans.value.WritableBooleanValue;
 
 /**
  * Servlet implementation class ProductController
@@ -27,7 +28,7 @@ import javafx.beans.value.WritableBooleanValue;
 @MultipartConfig
 public class ProductController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
+    private static final Logger log = LogManager.getLogger(ProductController.class); 
 	private ProductService productService;
     /**
      * @see HttpServlet#HttpServlet()
@@ -53,7 +54,9 @@ public class ProductController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		log.info("/product request received");
 		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
+		
 		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
 		request.setAttribute("productFileResponse", productFileDTO);
 
