@@ -119,16 +119,16 @@ INSERT INTO APP.PRODUCT VALUES(2, 'P1', 5564.54, 'LEVEL 2', 'nthikevojaa', DEFAU
 INSERT INTO APP.PRODUCT VALUES(3, 'P1', 5564.54, 'LEVEL 3', 'nthikevojaa', DEFAULT, DEFAULT);
 
 
-DROP TABLE APP.PRODUCTCATEGORY;
-CREATE TABLE APP.PRODUCTCATEGORY (
-	categoryId int, 
-    categoryName varchar(20),
-    primary key (categoryId)
-);
-
-DROP TABLE APP.SHIPPINGCOMPANY;
-CREATE TABLE APP.SHIPPINGCOMPANY (
-    companyId int,
-    companyName varchar(20),  
-    primary key (companyId)
-);
+--DROP TABLE APP.PRODUCTCATEGORY;
+--CREATE TABLE APP.PRODUCTCATEGORY (
+--	categoryId int, 
+--    categoryName varchar(20),
+--    primary key (categoryId)
+--);
+--
+--DROP TABLE APP.SHIPPINGCOMPANY;
+--CREATE TABLE APP.SHIPPINGCOMPANY (
+--    companyId int,
+--    companyName varchar(20),  
+--    primary key (companyId)
+--);

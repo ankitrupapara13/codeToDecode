@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.sql.Date;
 import java.util.stream.Collectors;
+
+import org.apache.derby.impl.sql.execute.CurrentDatetime;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -93,7 +96,6 @@ public class Caller {
 //
 //		try {
 //			System.out.println(emImpl.getCustomerById(103));
-//			System.out.println("invoice : "+ emImpl.getInvoiceByOrderId(55556));
 //			System.out.println(emImpl.getProducts());
 //			
 //			System.out.println(emImpl.approveOrder(55557));
@@ -104,10 +106,27 @@ public class Caller {
 //		
 //		}
 		
+//		try {
+//			System.out.println(emImpl.getCustomerById(103));
+//		} catch (CustomerNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		try {
+			
 //			System.out.println("invoice : "+ emImpl.getOrdersOfEmployee(104));
 //			System.out.println("Exp : " + emImpl.completeOrder());
-			System.out.println("products : " + emImpl.getProducts());
+//			System.out.println("products : " + emImpl.getProducts());
+//			System.out.println();
+			
+			Product pr = new Product( 0, "Product201", 101.01, "LEVEL 1", new Company("Company1", "Rajkot1", "Gujarat1", "nthikevojaa", new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()) ) , new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()) );
+			Product[] p = {pr, pr, pr};
+			
+			emImpl.addProductsToDB( p );
+			
+//			System.out.println("invoice : "+ emImpl.getInvoiceByOrderId(55556));
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
