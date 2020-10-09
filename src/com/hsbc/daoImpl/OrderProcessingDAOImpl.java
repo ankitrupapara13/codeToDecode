@@ -1,6 +1,7 @@
 package com.hsbc.daoImpl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.exceptions.CompanyNotFoundException;
 import com.hsbc.exceptions.CustomerNotFoundException;
 import com.hsbc.exceptions.EmployeeNotFoundException;
+import com.hsbc.exceptions.InvoiceNotFoundException;
 import com.hsbc.exceptions.OrderNotFoundForEmployee;
 import com.hsbc.exceptions.ProductNotFoundException;
 import com.hsbc.models.Company;
@@ -94,6 +96,49 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return cust;
 	}
 
+	public Product productFetcher(int productId) throws CompanyNotFoundException, ProductNotFoundException {
+		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
+		String queryCompany = "SELECT * FROM APP.COMPANY WHERE gstNumber=?";
+
+		ResultSet rsProduct = null;
+		ResultSet rsCompany = null;
+
+		PreparedStatement ppstmtProduct;
+		PreparedStatement ppstmtCompany;
+
+		try {
+			ppstmtProduct = con.prepareStatement(queryProduct);
+			ppstmtCompany = con.prepareStatement(queryCompany);
+
+			ppstmtProduct.setInt(1, productId);
+
+			rsProduct = ppstmtProduct.executeQuery();
+			if (rsProduct.next()) {
+				String gstNum = rsProduct.getString(5);
+
+				ppstmtCompany.setString(1, gstNum);
+				rsCompany = ppstmtCompany.executeQuery();
+				if (rsCompany.next()) {
+					// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
+					return (new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
+							rsProduct.getString(4),
+							new Company(rsCompany.getString(1), rsCompany.getString(2), rsCompany.getString(3),
+									rsCompany.getString(4), rsCompany.getTime(5), rsCompany.getTime(6)),
+							rsProduct.getTime(6), rsProduct.getTime(7)));
+				} else {
+					throw new CompanyNotFoundException(
+							"Company is not added in Company Database. Please add Company First.");
+				}
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	@Override
 	public List<Product> getProductByProductIds(int[] productIds)
 			throws ProductNotFoundException, CompanyNotFoundException {
@@ -115,28 +160,9 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 			for (int pId : productIds) {
 				ppstmtProduct.setInt(1, pId);
-				rsProduct = ppstmtProduct.executeQuery();
-				if (rsProduct.next()) {
 
-					String gstNum = rsProduct.getString(5);
-					ppstmtCompany.setString(1, gstNum);
-					rsCompany = ppstmtCompany.executeQuery();
-					if (rsCompany.next()) {
-						// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
-						al.add(new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
-								rsProduct.getString(4),
-								new Company(rsCompany.getString(1), rsCompany.getString(2), rsCompany.getString(3),
-										rsCompany.getString(4), rsCompany.getTime(5), rsCompany.getTime(6)),
-								rsProduct.getTime(6), rsProduct.getTime(7)));
-					} else {
-						throw new CompanyNotFoundException(
-								"Company is not added in Company Database. Please add Company First.");
-					}
+				al.add(productFetcher(pId));
 
-				} else {
-					throw new ProductNotFoundException(
-							"Product is not added in Product Database. Please add Product First.");
-				}
 			}
 
 			return al;
@@ -151,7 +177,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	@Override
 	public List<OrderDetails> getOrdersOfEmployee(int employeeId)
-			throws OrderNotFoundForEmployee, ProductNotFoundException {
+			throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
 		// TODO Auto-generated method stub
 //		OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
 
@@ -175,8 +201,8 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 			if (rs.next()) {
 
-				rs = ppstmt.executeQuery();
-				while (rs.next()) {
+//				rs = ppstmt.executeQuery();
+				do {
 
 					// WE GOT NEW ORDER ID
 
@@ -186,39 +212,42 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 					ArrayList<Product> productList = new ArrayList<Product>();
 					if (rsOrder.next()) {
 
-						rsOrder = ppstmtOrder.executeQuery();
-						while (rsOrder.next()) {
+//						rsOrder = ppstmtOrder.executeQuery();
+						do {
 							// WE GOT NEW PRODUCT ID
 
 							ppstmtProduct.setInt(1, rsOrder.getInt(2));
 							rsProduct = ppstmtProduct.executeQuery();
 
 							if (rsProduct.next()) {
+								do {
 
-								rsProduct = ppstmtProduct.executeQuery();
-								while (rsProduct.next()) {
-									System.out.println("prod added");
+//								System.out.println("prod added");
 									// PRODUCT IS ADDED TO PRODUCT ARRAY_LIST
-									productList.add(new Product(rsProduct.getInt(1), rsProduct.getString(2),
-											rsProduct.getDouble(3), rsProduct.getString(4),
-											(Company) rsProduct.getObject(5), rsProduct.getTime(6),
-											rsProduct.getTime(7)));
-								}
+									productList.add(productFetcher(rsProduct.getInt(1)));
+//											new Product(rsProduct.getInt(1), rsProduct.getString(2),
+//											rsProduct.getDouble(3), rsProduct.getString(4),
+//											, rsProduct.getTime(6),
+//											rsProduct.getTime(7))
+
+								} while (rsProduct.next());
 							} else {
 								throw new ProductNotFoundException(
 										"Product is not added in Product Database. Please add Product First.");
 							}
 
-						}
+							orderList.add(new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4),
+									productList, rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8),
+									rs.getTime(9), rs.getTime(10)));
+
+//						System.out.println(orderList);
+						} while (rsOrder.next());
+
 					} else {
 						throw new OrderNotFoundForEmployee(
 								"No order found for this employee ID in OrderProducts table");
 					}
-					orderList.add(new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), productList,
-							rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8), rs.getTime(9),
-							rs.getTime(10)));
-
-				}
+				} while (rs.next());
 
 			} else {
 				throw new OrderNotFoundForEmployee("No order found for this employee ID");
@@ -234,13 +263,34 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	@Override
 	public Invoice addInvoiceToDB(Invoice invoice) {
-		// TODO Auto-generated method stub
+
+		String queryInvoice = "INSERT INTO APP.INVOICE VALUES(?,?,?,?,?,?,?,?,?)";
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement ppstmt = con.prepareStatement(queryInvoice);
+
+			ppstmt.setInt(1, invoice.getInvoiceId());
+			ppstmt.setDate(2, (Date) invoice.getInvoiceDate());
+			ppstmt.setInt(3, invoice.getOrderDetails().getOrderId());
+			ppstmt.setString(4, invoice.getGstType());
+			ppstmt.setDouble(5, invoice.getGstAmount());
+			ppstmt.setDouble(6, invoice.getTotalInvoiceAmount());
+			ppstmt.setString(7, invoice.getInvoiceStatus());
+			ppstmt.setTime(8, invoice.getInvoiceCreatedAt());
+			ppstmt.setTime(9, invoice.getInvoiceUpdatedAt());
+			ppstmt.execute();
+
+			con.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 
-	
 	@Override
-	public Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
+	public Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException {
 		// TODO Auto-generated method stub
 
 		// OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
@@ -261,6 +311,8 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 				return new Invoice(od, rs.getInt(1), rs.getDate(2), rs.getString(4), rs.getFloat(5), rs.getFloat(6),
 						rs.getString(7), rs.getTime(8), rs.getTime(9));
+			}else {
+				throw new InvoiceNotFoundException("Invioce is not present in database.");
 			}
 
 		} catch (SQLException e) {
@@ -295,24 +347,29 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 			rsProduct = ppstmtProduct.executeQuery();
 
 			if (rsProduct.next()) {
-				rsProduct = ppstmtProduct.executeQuery();
-				while (rsProduct.next()) {
-					String gstNum = rsProduct.getString(5);
-					ppstmtCompany.setString(1, gstNum);
-					rsCompany = ppstmtCompany.executeQuery();
-					if (rsCompany.next()) {
-						// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
-						al.add(new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
-								rsProduct.getString(4),
-								new Company(rsCompany.getString(1), rsCompany.getString(2), rsCompany.getString(3),
-										rsCompany.getString(4), rsCompany.getTime(5), rsCompany.getTime(6)),
-								rsProduct.getTime(6), rsProduct.getTime(7)));
-					} else {
-						throw new CompanyNotFoundException(
-								"Company is not added in Company Database. Please add Company First.");
-					}
 
-				}
+				do {
+					al.add(productFetcher(rsProduct.getInt(1)));
+				} while (rsProduct.next());
+
+//				rsProduct = ppstmtProduct.executeQuery();
+//				while (rsProduct.next()) {
+//					String gstNum = rsProduct.getString(5);
+//					ppstmtCompany.setString(1, gstNum);
+//					rsCompany = ppstmtCompany.executeQuery();
+//					if (rsCompany.next()) {
+//						// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
+//						al.add(new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
+//								rsProduct.getString(4),
+//								new Company(rsCompany.getString(1), rsCompany.getString(2), rsCompany.getString(3),
+//										rsCompany.getString(4), rsCompany.getTime(5), rsCompany.getTime(6)),
+//								rsProduct.getTime(6), rsProduct.getTime(7)));
+//					} else {
+//						throw new CompanyNotFoundException(
+//								"Company is not added in Company Database. Please add Company First.");
+//					}
+//
+//				}
 				return al;
 
 			} else {
@@ -470,7 +527,8 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 		List<OrderDetails> updatedOrders = new ArrayList<OrderDetails>();
 
-		String fetchPendingQuery = "SELECT * FROM APP.ORDERDETAILS WHERE STATUS = 'PENDING'";
+		//untested
+		String fetchPendingQuery = "SELECT * FROM APP.ORDERDETAILS WHERE STATUS = 'PENDING' WHEN DATEDIFF(day, CURRENT_DATE, CREATEDAT) > 29 ;";
 
 		ResultSet rs;
 		try {
@@ -507,83 +565,138 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 		String query = "SELECT * FROM APP.ORDERDETAILS WHERE orderId=?";
 		String queryOrder = "SELECT * FROM APP.ORDERPRODUCTS WHERE orderId=?";
-		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
+//		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
 
 		ResultSet rs = null;
 		ResultSet rsOrder = null;
-		ResultSet rsProduct = null;
+//		ResultSet rsProduct = null;
 
 		ArrayList<Product> productList = null;
 
 		try {
 			PreparedStatement ppstmt = con.prepareStatement(query);
 			PreparedStatement ppstmtOrder = con.prepareStatement(queryOrder);
-			PreparedStatement ppstmtProduct = con.prepareStatement(queryProduct);
+//			PreparedStatement ppstmtProduct = con.prepareStatement(queryProduct);
 			ppstmt.setInt(1, orderId);
 			rs = ppstmt.executeQuery();
-//			if (rs.next()) {
-//				rs.previous();
+
 			while (rs.next()) {
 
-//				System.out.println("inside while");
 				// ORDER FETCHED
 				ppstmtOrder.setInt(1, rs.getInt(1));
 				rsOrder = ppstmtOrder.executeQuery();
 
-//				if (rsOrder.next()) {
-//					System.out.println("pro if");
-//					rsOrder = ppstmtOrder.executeQuery();
 				while (rsOrder.next()) {
 
-//						System.out.println("pro while");
 					// WE GOT NEW PRODUCT ID
 					productList = new ArrayList<Product>();
-					ppstmtProduct.setInt(1, rsOrder.getInt(2));
-					rsProduct = ppstmtProduct.executeQuery();
-
-//							if (rsProduct.next()) {
+//					ppstmtProduct.setInt(1, rsOrder.getInt(2));
 //
-//								System.out.println("p if");
-//								rsProduct = ppstmtProduct.executeQuery();
-					while (rsProduct.next()) {
-
-//							System.out.println("p while");
-						// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
-						productList.add(new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
-								rsProduct.getString(4), (Company) rsProduct.getObject(5), rsProduct.getTime(6),
-								rsProduct.getTime(7)));
-					}
-//						if (productList.size() < 1) {
-//							throw new ProductNotFoundException(
-//									"Product is not added in Product Database. Please add Product First.");
-//						}
-//							} else {
-//								throw new ProductNotFoundException(
-//										"Product is not added in Product Database. Please add Product First.");
-//							}
-
-//					}
+//					rsProduct = ppstmtProduct.executeQuery();
+//					if (!rsProduct.next()) {
+//						System.out.println("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 //					} else {
-//						throw new OrderNotFoundForEmployee(
-//								"No order found for this Order ID in OrderProducts table");
-//					}
-
+//
+//						do {
+//							// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
+//							System.out.println("product added");
+					productList.add(productFetcher(rsOrder.getInt(2)));
+//						} while (rsProduct.next());
 				}
+
+//				}
 				return (new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), productList,
 						rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8), rs.getTime(9),
 						rs.getTime(10)));
 
-//			} else {
-//				throw new OrderNotFoundForEmployee("No order found for this employee ID");
-//			}
-
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | CompanyNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+//	public OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
+//
+//		String query = "SELECT * FROM APP.ORDERDETAILS WHERE orderId=?";
+//		String queryOrder = "SELECT * FROM APP.ORDERPRODUCTS WHERE orderId=?";
+//		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
+//
+//		ResultSet rs = null;
+//		ResultSet rsOrder = null;
+//		ResultSet rsProduct = null;
+//
+//		ArrayList<Product> productList = null;
+//
+//		try {
+//			PreparedStatement ppstmt = con.prepareStatement(query);
+//			PreparedStatement ppstmtOrder = con.prepareStatement(queryOrder);
+//			PreparedStatement ppstmtProduct = con.prepareStatement(queryProduct);
+//			ppstmt.setInt(1, orderId);
+//			rs = ppstmt.executeQuery();
+////			if (rs.next()) {
+////				rs.previous();
+//			while (rs.next()) {
+//
+////				System.out.println("inside while");
+//				// ORDER FETCHED
+//				ppstmtOrder.setInt(1, rs.getInt(1));
+//				rsOrder = ppstmtOrder.executeQuery();
+//
+////				if (rsOrder.next()) {
+////					System.out.println("pro if");
+////					rsOrder = ppstmtOrder.executeQuery();
+//				while (rsOrder.next()) {
+//
+////						System.out.println("pro while");
+//					// WE GOT NEW PRODUCT ID
+//					productList = new ArrayList<Product>();
+//					ppstmtProduct.setInt(1, rsOrder.getInt(2));
+//					rsProduct = ppstmtProduct.executeQuery();
+//
+////							if (rsProduct.next()) {
+////
+////								System.out.println("p if");
+////								rsProduct = ppstmtProduct.executeQuery();
+//					while (rsProduct.next()) {
+//
+////							System.out.println("p while");
+//						// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
+//						productList.add(new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
+//								rsProduct.getString(4), (Company) rsProduct.getObject(5), rsProduct.getTime(6),
+//								rsProduct.getTime(7)));
+//					}
+////						if (productList.size() < 1) {
+////							throw new ProductNotFoundException(
+////									"Product is not added in Product Database. Please add Product First.");
+////						}
+////							} else {
+////								throw new ProductNotFoundException(
+////										"Product is not added in Product Database. Please add Product First.");
+////							}
+//
+////					}
+////					} else {
+////						throw new OrderNotFoundForEmployee(
+////								"No order found for this Order ID in OrderProducts table");
+////					}
+//
+//				}
+//				return (new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), productList,
+//						rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8), rs.getTime(9),
+//						rs.getTime(10)));
+//
+////			} else {
+////				throw new OrderNotFoundForEmployee("No order found for this employee ID");
+////			}
+//
+//			}
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
 }
