@@ -25,6 +25,7 @@ import com.hsbc.models.OrderDetails;
 import com.hsbc.models.Product;
 
 public class OrderProcessingDAOImpl implements OrderProcessingDAO {
+
 	private static Connection con;
 	private static OrderProcessingDAO single_instance = null;
 
@@ -49,7 +50,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		// TODO Auto-generated method stub
 		ResultSet rs = null;
 		Employee emp = null;
-		System.out.println(con);
+//		System.out.println(con);
 		String query = "SELECT * FROM APP.EMPLOYEE WHERE employeeId=?";
 		try {
 			PreparedStatement ppstmt = con.prepareStatement(query);
@@ -62,7 +63,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 				throw new EmployeeNotFoundException(
 						"Employee is not added in Employee Database. Please add Employee First.");
 			}
-			System.out.println(emp);
+//			System.out.println(emp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,6 +115,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 			rsProduct = ppstmtProduct.executeQuery();
 			if (rsProduct.next()) {
+				// Product Found
 				String gstNum = rsProduct.getString(5);
 
 				ppstmtCompany.setString(1, gstNum);
@@ -130,6 +132,9 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 							"Company is not added in Company Database. Please add Company First.");
 				}
 
+			} else {
+				throw new ProductNotFoundException(
+						"Product is not added in Product Database. Please add Product First.");
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -144,35 +149,15 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 			throws ProductNotFoundException, CompanyNotFoundException {
 //		OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
 		List<Product> al = new ArrayList<>();
-		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
-		String queryCompany = "SELECT * FROM APP.COMPANY WHERE gstNumber=?";
 
-		ResultSet rsProduct = null;
-		ResultSet rsCompany = null;
+		for (int pId : productIds) {
 
-		PreparedStatement ppstmtProduct;
-		PreparedStatement ppstmtCompany;
+			al.add(productFetcher(pId));
 
-		try {
-
-			ppstmtProduct = con.prepareStatement(queryProduct);
-			ppstmtCompany = con.prepareStatement(queryCompany);
-
-			for (int pId : productIds) {
-				ppstmtProduct.setInt(1, pId);
-
-				al.add(productFetcher(pId));
-
-			}
-
-			return al;
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
-		return null;
+		return al;
+
 	}
 
 	@Override
@@ -264,23 +249,33 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	@Override
 	public Invoice addInvoiceToDB(Invoice invoice) {
 
-		String queryInvoice = "INSERT INTO APP.INVOICE VALUES(?,?,?,?,?,?,?,?,?)";
+		String queryInvoice = "INSERT INTO APP.INVOICE VALUES(next value for INVOICE_SEQ,?,?,?,?,?,?,?,?)";
+		String counter = "SELECT COUNT(*) AS TOTALENTRIES FROM APP.PRODUCT";
+
 		try {
 			con.setAutoCommit(false);
 			PreparedStatement ppstmt = con.prepareStatement(queryInvoice);
 
-			ppstmt.setInt(1, invoice.getInvoiceId());
-			ppstmt.setDate(2, (Date) invoice.getInvoiceDate());
-			ppstmt.setInt(3, invoice.getOrderDetails().getOrderId());
-			ppstmt.setString(4, invoice.getGstType());
-			ppstmt.setDouble(5, invoice.getGstAmount());
-			ppstmt.setDouble(6, invoice.getTotalInvoiceAmount());
-			ppstmt.setString(7, invoice.getInvoiceStatus());
-			ppstmt.setTime(8, invoice.getInvoiceCreatedAt());
-			ppstmt.setTime(9, invoice.getInvoiceUpdatedAt());
-			ppstmt.execute();
+			PreparedStatement ps = con.prepareStatement(counter);
+			ResultSet count = ps.executeQuery();
 
-			con.commit();
+			if (count.next()) {
+
+				int currentEntries = count.getInt("TOTALENTRIES");
+
+				ppstmt.setInt(1, 101 + currentEntries);
+				ppstmt.setDate(2, (Date) invoice.getInvoiceDate());
+				ppstmt.setInt(3, invoice.getOrderDetails().getOrderId());
+				ppstmt.setString(4, invoice.getGstType());
+				ppstmt.setDouble(5, invoice.getGstAmount());
+				ppstmt.setDouble(6, invoice.getTotalInvoiceAmount());
+				ppstmt.setString(7, invoice.getInvoiceStatus());
+				ppstmt.setTime(8, invoice.getInvoiceCreatedAt());
+				ppstmt.setTime(9, invoice.getInvoiceUpdatedAt());
+				ppstmt.execute();
+
+				con.commit();
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -290,7 +285,8 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override
-	public Invoice getInvoiceByOrderId(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException {
+	public Invoice getInvoiceByOrderId(int orderId)
+			throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException {
 		// TODO Auto-generated method stub
 
 		// OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
@@ -311,7 +307,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 				return new Invoice(od, rs.getInt(1), rs.getDate(2), rs.getString(4), rs.getFloat(5), rs.getFloat(6),
 						rs.getString(7), rs.getTime(8), rs.getTime(9));
-			}else {
+			} else {
 				throw new InvoiceNotFoundException("Invioce is not present in database.");
 			}
 
@@ -388,25 +384,36 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	@Override
 	public void addProductsToDB(Product[] products) {
-		// TODO Auto-generated method stub
-		// OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
 
 		String queryOrderProduct = "INSERT INTO APP.PRODUCT VALUES(?,?,?,?,?,?,?)";
+		String counter = "SELECT COUNT(*) AS TOTALENTRIES FROM APP.PRODUCT";
+
 		try {
 			con.setAutoCommit(false);
 			PreparedStatement ppstmt = con.prepareStatement(queryOrderProduct);
+			PreparedStatement ps = con.prepareStatement(counter);
+			ResultSet count = ps.executeQuery();
 
-			for (Product p : products) {
-				ppstmt.setInt(1, p.getProductId());
-				ppstmt.setString(2, p.getProductName());
-				ppstmt.setDouble(3, p.getProductPrice());
-				ppstmt.setString(4, p.getProductCategory());
-				ppstmt.setString(5, p.getCompany().getGstNumber());
-				ppstmt.setTime(6, p.getCreatedAt());
-				ppstmt.setTime(7, p.getUpdatedAt());
-				ppstmt.execute();
+			if (count.next()) {
+
+				int currentEntries = count.getInt("TOTALENTRIES");
+
+				int i = 0;
+
+				for (Product p : products) {
+
+					ppstmt.setInt(1, 11 + currentEntries + i);
+					ppstmt.setString(2, p.getProductName());
+					ppstmt.setDouble(3, p.getProductPrice());
+					ppstmt.setString(4, p.getProductCategory());
+					ppstmt.setString(5, p.getCompany().getGstNumber());
+					ppstmt.setTime(6, p.getCreatedAt());
+					ppstmt.setTime(7, p.getUpdatedAt());
+					ppstmt.execute();
+					i++;
+				}
+				con.commit();
 			}
-			con.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -421,33 +428,42 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 		String query = "INSERT INTO APP.ORDERDETAILS VALUES(?,?,?,?,?,?,?,?,?)";
 		String queryOrderProduct = "INSERT INTO APP.ORDERPRODUCTS VALUES(?,?)";
+		String counter = "SELECT COUNT(*) AS TOTALENTRIES FROM APP.ORDERDETAILS";
+
 		try {
 			con.setAutoCommit(false);
 
 			PreparedStatement ppstmt = con.prepareStatement(query);
 			PreparedStatement ppstmtOrderProduct = con.prepareStatement(queryOrderProduct);
 
-			ppstmt.setInt(1, orderDetails.getOrderId());
-			ppstmt.setDate(2, (java.sql.Date) orderDetails.getOrderDate());
-			ppstmt.setInt(3, orderDetails.getCustomerId());
-			ppstmt.setInt(4, orderDetails.getEmployeeId());
-			ppstmt.setDouble(5, orderDetails.getTotalOrderValue());
-			ppstmt.setDouble(6, orderDetails.getShippingCost());
-			ppstmt.setString(7, orderDetails.getShippingCompany());
-			ppstmt.setString(8, orderDetails.getStatus());
-			ppstmt.setTime(9, orderDetails.getCreatedAt());
-			ppstmt.setTime(10, orderDetails.getUpdatedAt());
+			PreparedStatement ps = con.prepareStatement(counter);
+			ResultSet count = ps.executeQuery();
 
-			ppstmtOrderProduct.setInt(1, orderDetails.getOrderId());
+			if (count.next()) {
 
-			for (Product p : orderDetails.getProducts()) {
-				ppstmtOrderProduct.setInt(2, p.getProductId());
-				ppstmtOrderProduct.execute();
+				int currentEntries = count.getInt("TOTALENTRIES");
+
+				ppstmt.setInt(1, 1001 + currentEntries);
+				ppstmt.setDate(2, (java.sql.Date) orderDetails.getOrderDate());
+				ppstmt.setInt(3, orderDetails.getCustomerId());
+				ppstmt.setInt(4, orderDetails.getEmployeeId());
+				ppstmt.setDouble(5, orderDetails.getTotalOrderValue());
+				ppstmt.setDouble(6, orderDetails.getShippingCost());
+				ppstmt.setString(7, orderDetails.getShippingCompany());
+				ppstmt.setString(8, orderDetails.getStatus());
+				ppstmt.setTime(9, orderDetails.getCreatedAt());
+				ppstmt.setTime(10, orderDetails.getUpdatedAt());
+
+				ppstmtOrderProduct.setInt(1, 1000 + currentEntries);
+
+				for (Product p : orderDetails.getProducts()) {
+					ppstmtOrderProduct.setInt(2, p.getProductId());
+					ppstmtOrderProduct.execute();
+				}
+
+				ppstmt.execute();
+				con.commit();
 			}
-
-			ppstmt.execute();
-			con.commit();
-
 			return orderDetails;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -527,7 +543,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 		List<OrderDetails> updatedOrders = new ArrayList<OrderDetails>();
 
-		//untested
+		// untested
 		String fetchPendingQuery = "SELECT * FROM APP.ORDERDETAILS WHERE STATUS = 'PENDING' WHEN DATEDIFF(day, CURRENT_DATE, CREATEDAT) > 29 ;";
 
 		ResultSet rs;
@@ -616,6 +632,9 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		}
 		return null;
 	}
+
+	// DATE : java.sql.Date.valueOf(new java.util.Date())
+	// TIME : new Time(System.currentTimeMillis())
 
 //	public OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
 //
