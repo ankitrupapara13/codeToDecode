@@ -1,6 +1,8 @@
 package com.hsbc.controllers;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +25,6 @@ public class ProductQuote1 extends HttpServlet {
      */
 	
 	private NewQuoteService newQuoteService;
-	private Customer customer;
     public ProductQuote1() {
        
     	super();
@@ -36,11 +37,12 @@ public class ProductQuote1 extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		HttpSession ss=request.getSession();
-		 String custId=request.getParameter("customerId");
-		customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
-		ss.setAttribute("customer", customer);
-		response.sendRedirect("NewQuote.jsp");
+		
+		String custId=request.getParameter("customerId");
+		Customer customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
+		request.setAttribute("customer", customer);
+		String destination="/WEB-INF/NewQuote.jsp";
+		request.getRequestDispatcher(destination).forward(request, response);
 	
 		
 		
