@@ -1,8 +1,6 @@
 package com.hsbc.controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -57,7 +55,6 @@ public class ProductController extends HttpServlet {
 		log.info("/product request received");
 		ProductFileDTO productFileDTO = productService.addProduct(request.getPart("file"));
 		
-		System.out.println(productFileDTO.getSuccessCount() + "|||" + productFileDTO.getFailedCount());
 		request.setAttribute("productFileResponse", productFileDTO);
 
 		request.getRequestDispatcher("./importProducts.jsp").forward(request, response);

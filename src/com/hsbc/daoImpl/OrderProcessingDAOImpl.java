@@ -425,8 +425,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	public OrderDetails addOrdertoDB(OrderDetails orderDetails) {
 		// TODO Auto-generated method stub
 		// OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
-
-		String query = "INSERT INTO APP.ORDERDETAILS VALUES(?,?,?,?,?,?,?,?,?)";
+		String query = "INSERT INTO APP.ORDERDETAILS VALUES(?,?,?,?,?,?,?,?,?,?)";
 		String queryOrderProduct = "INSERT INTO APP.ORDERPRODUCTS VALUES(?,?)";
 		String counter = "SELECT COUNT(*) AS TOTALENTRIES FROM APP.ORDERDETAILS";
 
@@ -454,7 +453,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 				ppstmt.setTime(9, orderDetails.getCreatedAt());
 				ppstmt.setTime(10, orderDetails.getUpdatedAt());
 
-				ppstmtOrderProduct.setInt(1, 1000 + currentEntries);
+				ppstmtOrderProduct.setInt(1, 1001 + currentEntries);
 
 				for (Product p : orderDetails.getProducts()) {
 					ppstmtOrderProduct.setInt(2, p.getProductId());

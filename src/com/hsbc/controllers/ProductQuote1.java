@@ -2,14 +2,14 @@ package com.hsbc.controllers;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+
+import com.google.gson.Gson;
 import com.hsbc.models.Customer;
 import com.hsbc.service.NewQuoteService;
 
@@ -25,11 +25,12 @@ public class ProductQuote1 extends HttpServlet {
      */
 	
 	private NewQuoteService newQuoteService;
+	private Gson gson;
     public ProductQuote1() {
        
     	super();
         newQuoteService=new NewQuoteService();
-        
+        gson = new Gson();
     }
 
 	/**
@@ -40,12 +41,9 @@ public class ProductQuote1 extends HttpServlet {
 		
 		String custId=request.getParameter("customerId");
 		Customer customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
-		request.setAttribute("customer", customer);
-		String destination="/WEB-INF/NewQuote.jsp";
-		request.getRequestDispatcher(destination).forward(request, response);
-	
-		
-		
+		String responseStr = this.gson.toJson(customer);
+		response.setContentType("application/json");
+		response.getWriter().print(responseStr);
 		
 	}
 
