@@ -24,9 +24,8 @@ public class ProductQuote2 extends HttpServlet {
      */
 	
 	private NewQuoteService newQuoteService;
-	private ProductQuoteDto productQuoteDto;
 	
-
+	
     public ProductQuote2() {
         
     	super();
@@ -38,10 +37,10 @@ public class ProductQuote2 extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String param=request.getParameter("prodIds");
-		productQuoteDto=newQuoteService.calcCosts(param);
+		String param=request.getParameter("productIds");
+		ProductQuoteDto productQuoteDto=newQuoteService.calcCosts(param);
 		request.setAttribute("totalOrderValue", productQuoteDto.getTotalOrderValue());
-		request.setAttribute("shippingCost",productQuoteDto.getTotalOrderValue() );
+		request.setAttribute("shippingCost",productQuoteDto.getShippingCost());
 		String destination = "/WEB-INF/NewQuote.jsp";
 		RequestDispatcher rd = getServletContext().getRequestDispatcher(destination);
 		rd.forward(request, response);
