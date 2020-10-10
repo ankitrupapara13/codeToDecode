@@ -45,6 +45,6 @@ public interface OrderProcessingDAO {
 			throws OrderNotFoundForEmployee, ProductNotFoundException; // Order Fetcher is working behind the scenes to
 																	// fetch OrderDetails object for approveOrder,
 																	// completeOrder, expiryOrder
-
+	public Product productFetcher(int productId) throws CompanyNotFoundException, ProductNotFoundException; 
 	
 }
