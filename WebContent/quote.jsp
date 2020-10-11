@@ -216,7 +216,15 @@
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
-          alert('Form submitted successfully')
+        	if(xhr.responseText=="sessionexpired"){
+        		alert("Session Expired");
+        		document.location.href="home.html";
+        		}
+        	else{
+        		alert('Form submitted successfully')
+                window.location.href="orderEmp.html";
+			}
+          
          
         }
         else if(xhr.readyState == 4 && xhr.status !== 200){
@@ -253,8 +261,14 @@
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
-          var response = JSON.parse(xhr.responseText);
-          renderCustomerData(response)
+        	if(xhr.responseText=="sessionexpired"){
+        		alert("Session Expired");
+        		document.location.href="home.html";
+        		}else{
+        			 var response = JSON.parse(xhr.responseText);
+        	          renderCustomerData(response)
+        		}
+         
         } 
         
       }
@@ -285,8 +299,14 @@
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
-          var productResponse = JSON.parse(xhr.responseText);
-          renderProducts(productResponse);
+        	if(xhr.responseText=="sessionexpired"){
+        		alert("Session Expired");
+        		document.location.href="home.html";
+        		}else{
+        			var productResponse = JSON.parse(xhr.responseText);
+        	          renderProducts(productResponse);
+        		}
+          
         }  
       }
 
@@ -325,10 +345,16 @@
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
-          var response = JSON.parse(xhr.responseText)
-         
-          document.getElementById('totalOrderValue').value = response['totalOrderValue']
-          document.getElementById('shippingCost').value = response['shippingCost']
+        	if(xhr.responseText=="sessionexpired"){
+        		alert("Session Expired");
+        		document.location.href="home.html";
+        		}else{
+        			var response = JSON.parse(xhr.responseText)
+        	         
+        	          document.getElementById('totalOrderValue').value = response['totalOrderValue']
+        	          document.getElementById('shippingCost').value = response['shippingCost']
+        		}
+          
         }  
         
       }
