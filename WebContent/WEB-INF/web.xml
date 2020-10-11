@@ -10,7 +10,10 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <listener>
-    <listener-class>com.hsbc.logger.ContextListener</listener-class>
+    <listener-class>com.hsbc.auto.ContextListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>com.hsbc.auto.Schedular</listener-class>
   </listener>
   <context-param>
     <param-name>log4j-config</param-name>
