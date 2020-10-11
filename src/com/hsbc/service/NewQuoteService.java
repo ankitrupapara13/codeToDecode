@@ -8,13 +8,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hsbc.Security.RSA;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.dto.ProductQuoteDto;
 import com.hsbc.exceptions.CompanyNotFoundException;
 import com.hsbc.exceptions.CustomerNotFoundException;
+import com.hsbc.exceptions.EmployeeNotFoundException;
+import com.hsbc.exceptions.OrderNotFoundForEmployee;
 import com.hsbc.exceptions.ProductNotFoundException;
+import com.hsbc.exceptions.SystemSecurityException;
 import com.hsbc.models.Customer;
+import com.hsbc.models.Employee;
 import com.hsbc.models.OrderDetails;
 import com.hsbc.models.Product;
 
@@ -212,6 +218,48 @@ public class NewQuoteService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+
+	public Employee employeelogin(int employeeId,String password) throws EmployeeNotFoundException, SystemSecurityException {
+		Employee e = orderProcessingDAOImpl.getEmployeeById(employeeId);
+		if(e!=null) {
+			String passFromDB = e.getPassword();
+			try {
+				passFromDB = RSA.decrypt(e.getPassword());
+			} catch (SystemSecurityException ex) {
+				if(passFromDB.equals(password)) {
+					password = RSA.encrypt(password);
+					//run an update PASSWORD for e.setpassword();
+				}
+			}
+		}
+		return e;
+	}
+	public Customer customerLogin(String customerId,String password) throws SystemSecurityException, CustomerNotFoundException {
+		Customer c = orderProcessingDAOImpl.getCustomerById(Integer.parseInt(customerId));
+		if(c!=null) {
+			String passFromDB = c.getPassword();
+			try {
+				passFromDB = RSA.decrypt(c.getPassword());
+			} catch (Exception ex) {
+				if(passFromDB.equals(password)) {
+					password = RSA.encrypt(password);
+					//run an update PASSWORD for e.setpassword();
+				}
+			}
+		}
+		return c;
+		
+	}
+	
+	public List<OrderDetails> getCustomerOrderDetailsList(int customerId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException{
+		List<OrderDetails> list = orderProcessingDAOImpl.getOrdersOfCustomer(customerId);
+		return list;
+	}
+	
+	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException  {
+		return orderProcessingDAOImpl.approveOrder(orderId);
 	}
 }
 
