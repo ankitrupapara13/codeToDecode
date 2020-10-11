@@ -4,7 +4,10 @@ package com.hsbc.service;
 import java.sql.Date;
 import java.sql.Time;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
+import com.hsbc.controllers.GetInvoice;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.exceptions.InvoiceNotFoundException;
@@ -16,7 +19,7 @@ import com.hsbc.models.OrderDetails;
 public class InvoiceService
 {
 	private OrderProcessingDAO orderProcessingDAO;
-	
+	private static final Logger log = LogManager.getLogger(InvoiceService.class); 
 	public InvoiceService() {
 		this.orderProcessingDAO = new OrderProcessingDAOImpl();
 	}
@@ -51,6 +54,7 @@ public class InvoiceService
 			return this.orderProcessingDAO.getInvoiceByOrderId(orderId);
 		} catch (OrderNotFoundForEmployee | ProductNotFoundException | InvoiceNotFoundException e) {
 			// TODO Auto-generated catch block
+			log.error("Error getting order by ID: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;

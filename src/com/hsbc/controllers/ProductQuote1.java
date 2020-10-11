@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.hsbc.models.Customer;
@@ -19,7 +21,7 @@ import com.hsbc.service.NewQuoteService;
 @WebServlet("/ProductQuote1")
 public class ProductQuote1 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	private static final Logger log = LogManager.getLogger(ProductQuote1.class); 
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -38,7 +40,7 @@ public class ProductQuote1 extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		
+		log.info("/ProductQuote1 GET request received");
 		String custId=request.getParameter("customerId");
 		Customer customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
 		String responseStr = this.gson.toJson(customer);

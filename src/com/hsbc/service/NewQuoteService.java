@@ -8,19 +8,29 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import com.hsbc.Security.RSA;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.dto.ProductQuoteDto;
 import com.hsbc.exceptions.CompanyNotFoundException;
 import com.hsbc.exceptions.CustomerNotFoundException;
+import com.hsbc.exceptions.EmployeeNotFoundException;
+import com.hsbc.exceptions.OrderNotFoundForEmployee;
 import com.hsbc.exceptions.ProductNotFoundException;
+import com.hsbc.exceptions.SystemSecurityException;
 import com.hsbc.models.Customer;
+import com.hsbc.models.Employee;
 import com.hsbc.models.OrderDetails;
 import com.hsbc.models.Product;
 
 public class NewQuoteService {
 
-
+	private static final Logger log = LogManager.getLogger(NewQuoteService.class); 
 	private OrderProcessingDAO orderProcessingDAOImpl;
 	private static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 	
@@ -28,8 +38,6 @@ public class NewQuoteService {
 	public NewQuoteService() 
 	{
 		super();
-	
-	
 		orderProcessingDAOImpl = OrderProcessingDAOImpl.getInstance();
 
 		
@@ -42,10 +50,9 @@ public class NewQuoteService {
 		   Customer c=null;
 	       	try {
 				   c=orderProcessingDAOImpl.getCustomerById(customerId);
-				   System.out.println(c);
 			}
 	       	catch (CustomerNotFoundException e) {
-				
+				log.error("Error getting customer data: " + e.getMessage());
 				e.printStackTrace();
 			}
 	       	return c;
@@ -76,10 +83,10 @@ public class NewQuoteService {
 				product= orderProcessingDAOImpl.productFetcher(productIds[j]);
 				totalOrderValue+=product.getProductPrice();
 			} catch (CompanyNotFoundException e) {
-				// TODO Auto-generated catch block
+				log.error("Error calculating costs : " +e.getMessage());
 				e.printStackTrace();
 			} catch (ProductNotFoundException e) {
-				// TODO Auto-generated catch block
+				log.error("Error calculation cost : " +e.getMessage());
 				e.printStackTrace();
 			}
 			
@@ -115,11 +122,11 @@ public class NewQuoteService {
 				try {
 					product= orderProcessingDAOImpl.productFetcher(productIds[j]);
 				} catch (CompanyNotFoundException e) {
-					
+					log.error("Error getting product by ID: " + e.getMessage());
 					e.printStackTrace();
 				} catch (ProductNotFoundException e) 
 				{
-					
+					log.error("Error getting product by ID: " + e.getMessage());
 					e.printStackTrace();
 				}
 				
@@ -168,7 +175,7 @@ public class NewQuoteService {
 				    	try {
 							prodList.add(orderProcessingDAOImpl.productFetcher(productIds[j]));
 						} catch (CompanyNotFoundException | ProductNotFoundException e) {
-							// TODO Auto-generated catch block
+							log.error("Error in saving products to DB: " + e.getMessage());
 							e.printStackTrace();
 						}
 				     	
@@ -208,10 +215,52 @@ public class NewQuoteService {
 		try {
 			return orderProcessingDAOImpl.getProducts();
 		} catch (ProductNotFoundException | CompanyNotFoundException e) {
-			// TODO Auto-generated catch block
+			log.error("Error in getting all products: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+
+	public Employee employeelogin(int employeeId,String password) throws EmployeeNotFoundException, SystemSecurityException {
+		Employee e = orderProcessingDAOImpl.getEmployeeById(employeeId);
+		if(e!=null) {
+			String passFromDB = e.getPassword();
+			try {
+				passFromDB = RSA.decrypt(e.getPassword());
+			} catch (SystemSecurityException ex) {
+				if(passFromDB.equals(password)) {
+					password = RSA.encrypt(password);
+					//run an update PASSWORD for e.setpassword();
+				}
+			}
+		}
+		return e;
+	}
+	public Customer customerLogin(String customerId,String password) throws SystemSecurityException, CustomerNotFoundException {
+		Customer c = orderProcessingDAOImpl.getCustomerById(Integer.parseInt(customerId));
+		if(c!=null) {
+			String passFromDB = c.getPassword();
+			try {
+				passFromDB = RSA.decrypt(c.getPassword());
+			} catch (Exception ex) {
+				if(passFromDB.equals(password)) {
+					password = RSA.encrypt(password);
+					//run an update PASSWORD for e.setpassword();
+				}
+			}
+		}
+		return c;
+		
+	}
+	
+	public List<OrderDetails> getCustomerOrderDetailsList(int customerId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException{
+		List<OrderDetails> list = orderProcessingDAOImpl.getOrdersOfCustomer(customerId);
+		return list;
+	}
+	
+	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException  {
+		return orderProcessingDAOImpl.approveOrder(orderId);
 	}
 }
 
