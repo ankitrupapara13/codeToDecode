@@ -54,7 +54,6 @@ public class ProductQuoteSubmit extends HttpServlet {
 		String totalOrderValue=request.getParameter("totalOrderValue");
 		String shippingCost=request.getParameter("shippingCosts");
 		
-		
 		newQuoteService.saveOrderDetailsToDb(orderDate,customerId,employeeId,gstNumber,address,city,phone,email,pincode,productIds,totalOrderValue,shippingCost);
 		
 		

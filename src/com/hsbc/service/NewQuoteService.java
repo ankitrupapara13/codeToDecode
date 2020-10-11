@@ -2,13 +2,11 @@ package com.hsbc.service;
 
 
 import java.sql.Time;
-import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
@@ -24,7 +22,7 @@ public class NewQuoteService {
 
 
 	private OrderProcessingDAO orderProcessingDAOImpl;
-	
+	private static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 	
 
 	public NewQuoteService() 
@@ -90,8 +88,10 @@ public class NewQuoteService {
 		}
 		
 		shippingCost=calcShippingPrice(totalOrderValue,productIds);
+		shippingCost=Double.parseDouble(decimalFormat.format(shippingCost));
+		totalOrderValue=Double.parseDouble(decimalFormat.format(totalOrderValue));
 		ProductQuoteDto productQuoteDto=new ProductQuoteDto(shippingCost, totalOrderValue);
-		System.out.println("TOV :" +totalOrderValue + " " +shippingCost);
+		
 		return productQuoteDto;
 		
 	}
@@ -151,18 +151,18 @@ public class NewQuoteService {
 		int i=0;
 		int[] productIds=new int[prodId.length];
 		for (String str : prodId)
-		{
-			    productIds[i++] = Integer.parseInt(str);
+		{	
+			productIds[i++] = Integer.parseInt(str);
 			    
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	    LocalDate orderDate = LocalDate.parse(Date, formatter);
 		//System.out.println(orderDate.getDayOfWeek());
 		if(orderDate.equals(LocalDate.now()) )         //checing if order date is current date
 		{
 			LocalDate calculatedDate=add(orderDate,3);
 			if(calculatedDate.getDayOfWeek()!=DayOfWeek.SATURDAY ||  calculatedDate.getDayOfWeek() != DayOfWeek.SUNDAY)
-			{
+			{	
 				 for(int j=0;j<productIds.length;j++)
 				    {
 				    	try {
@@ -178,6 +178,7 @@ public class NewQuoteService {
 				 double shippingCost=Double.parseDouble(shippindcst);
 				 int custId=Integer.parseInt(customerId);
 				 int empId=Integer.parseInt(employeeId);
+				 
 				 OrderDetails orderDetails=new OrderDetails(1000,java.sql.Date.valueOf(orderDate),custId,empId,prodList,totalOrderValue,shippingCost,"BLUE DART","PENDING",new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()));
 				 orderProcessingDAOImpl.addOrdertoDB(orderDetails);
 			}
@@ -188,7 +189,7 @@ public class NewQuoteService {
 	    if (workdays < 1) {
 	        return date;
 	    }
-
+	    
 	    LocalDate result = date;
 	    int addedDays = 0;
 	    while (addedDays < workdays) {
@@ -197,9 +198,20 @@ public class NewQuoteService {
 	              result.getDayOfWeek() == DayOfWeek.SUNDAY)) {
 	            ++addedDays;
 	        }  */
+	        addedDays++;
 	    }
 
 	    return result;
+	}
+	
+	public List<Product> getAllProducts(){
+		try {
+			return orderProcessingDAOImpl.getProducts();
+		} catch (ProductNotFoundException | CompanyNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
 

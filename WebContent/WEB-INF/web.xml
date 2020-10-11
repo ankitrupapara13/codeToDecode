@@ -9,14 +9,14 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
-  
-  
   <listener>
-    <listener-class>com.hsbc.logger.ContextListener</listener-class>
+    <listener-class>com.hsbc.auto.ContextListener</listener-class>
   </listener>
-   <context-param>
-        <param-name>log4j-config</param-name>
-        <param-value>WEB-INF/log4j.properties</param-value>
-    </context-param>	
-
+  <listener>
+    <listener-class>com.hsbc.auto.Schedular</listener-class>
+  </listener>
+  <context-param>
+    <param-name>log4j-config</param-name>
+    <param-value>WEB-INF/log4j.properties</param-value>
+  </context-param>
 </web-app>

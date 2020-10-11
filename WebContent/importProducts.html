@@ -68,10 +68,12 @@
 	    }
         document.getElementById('file-submit').addEventListener('click', function (event){
         	event.preventDefault();
+        	this.disable = true;
           	var input = document.getElementById('file-input');
             if(input.files.length == 0){
             	alert('Please select a file');
             	document.getElementById("file-upload-information").innerHTML = "";
+            	this.disable = false;
             	return;
             }
             
@@ -81,6 +83,7 @@
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
+                	alert('File uploaded successfully')
                     document.getElementById("file-upload-information").innerHTML = xhr.responseText;
                 }
                 document.getElementById('file-input-label').innerHTML = 'Choose file';
@@ -88,7 +91,7 @@
             }	
             xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
             xhr.send(data);
-             
+            this.disable = false;
         })
  
     </script>
