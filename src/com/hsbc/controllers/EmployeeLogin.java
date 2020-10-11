@@ -8,18 +8,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hsbc.Security.SessionManager;
+import com.hsbc.dto.EmployeeDTO;
 import com.hsbc.exceptions.EmployeeNotFoundException;
 import com.hsbc.exceptions.SystemSecurityException;
 import com.hsbc.models.Employee;
+import com.hsbc.service.EmployeeService;
 import com.hsbc.service.NewQuoteService;
 
 @WebServlet("/employeeLogin")
 public class EmployeeLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private NewQuoteService newQuoteService; 
+	private EmployeeService employeeService;
     public EmployeeLogin() {
         super();
         newQuoteService = new NewQuoteService();
+        employeeService = new EmployeeService();
     }
  
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,7 +34,9 @@ public class EmployeeLogin extends HttpServlet {
 			Employee c = null;
 			if(( c = newQuoteService.employeelogin(Integer.parseInt(employeeId), password))!=null) {
 				SessionManager.createSession(request, response, c.getEmployeeId());
-				request.getRequestDispatcher("orderEmp.html").forward(request, response);
+				EmployeeDTO employeeData = employeeService.getEmployeeDetails(c.getEmployeeId());
+				request.setAttribute("employee", employeeData);
+				request.getRequestDispatcher("orderEmp.jsp").forward(request, response);
 			}else {
 				request.setAttribute("loginMessage", "Username Or Password is incorrect");
 				request.getRequestDispatcher("FuryEmployee.jsp").forward(request, response);

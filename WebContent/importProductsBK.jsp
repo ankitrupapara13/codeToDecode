@@ -1,11 +1,11 @@
+<%@page import="com.hsbc.dto.EmployeeDTO"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Import Products</title>
-    
+<meta charset="ISO-8859-1">
+	<title>Import Products</title>
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
     <link rel="stylesheet" type="text/css" href="importProducts.css">
 </head>
@@ -20,11 +20,14 @@
 
 
     <div style="margin-top: 7%;" class="container">
-
+	
+	<%
+		EmployeeDTO employeeDTO = (EmployeeDTO)request.getAttribute("employee");
+	%>
 
 
         <div class="jumbotron">
-            <h1 class="display-4">Welcome,<span id="empName">Aman Saraff!</span></h1>
+            <h1 class="display-4">Welcome,<span id="empName"><%=employeeDTO.getUserName()%></span></h1>
             <p class="lead">Upload Files!</p>
             <hr style=" border: 2px solid red;"><br>
 
@@ -58,7 +61,7 @@
     <div class="navbar navbar-dark bg-dark footer-content-outer-div">
         <footer>
             <div class="footer-text">
-               Copyright &#169; 2020 | CodeFury | codeToDecode | All rights reserved | Handcrafted with ❤️
+               Copyright &#169; 2020 | CodeFury | codeToDecode | All rights reserved | Handcrafted with &#10084;&#65039;
             </div>
         </footer>
     </div>
