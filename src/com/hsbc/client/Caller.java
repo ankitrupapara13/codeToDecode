@@ -2,6 +2,7 @@ package com.hsbc.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.sql.Date;
 import java.util.stream.Collectors;
 
@@ -122,10 +123,12 @@ public class Caller {
 ////			System.out.println("products : " + emImpl.getProducts());
 ////			System.out.println();
 //			
-////			Product pr = new Product( 0, "Product201", 101.01, "LEVEL 1", new Company("Company1", "Rajkot1", "Gujarat1", "nthikevojaa", new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()) ) , new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()) );
-////			Product[] p = {pr, pr, pr};
-////			
-////			emImpl.addProductsToDB( p );
+//		
+//		System.out.println("new try in product add");
+//			Product pr = new Product( 0, "Product201", 101.01, "LEVEL 1", new Company("Company1", "Rajkot1", "Gujarat1", "nthikevojaa", new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()) ) , new Time(System.currentTimeMillis()), new Time(System.currentTimeMillis()) );
+//			Product[] p = {pr, pr, pr};
+//			
+//			emImpl.addProductsToDB( p );
 ////			
 //////			System.out.println("invoice : "+ emImpl.getInvoiceByOrderId(55556));
 ////			
@@ -146,14 +149,26 @@ public class Caller {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
+//		
+//		try {
+////			System.out.println( emImpl.getOrdersOfCustomer(103) );
+////			System.out.println( emImpl.getOrdersOfEmployee(104) );
+//			
+//			System.out.println( emImpl.expiryOrder());
+//			
+//			
+//		} catch (OrderNotFoundForEmployee | ProductNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
 		try {
-			System.out.println( emImpl.getOrdersOfCustomer(103) );
-			System.out.println( emImpl.getOrdersOfEmployee(104) );
-		} catch (OrderNotFoundForEmployee | ProductNotFoundException | CompanyNotFoundException e) {
+			System.out.println(emImpl.expiryOrder());
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		
 	}
 }
