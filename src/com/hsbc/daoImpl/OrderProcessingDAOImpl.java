@@ -23,6 +23,7 @@ import com.hsbc.models.Employee;
 import com.hsbc.models.Invoice;
 import com.hsbc.models.OrderDetails;
 import com.hsbc.models.Product;
+import com.hsbc.models.SessionEntity;
 
 public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
@@ -186,58 +187,104 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 			if (rs.next()) {
 
-//				rs = ppstmt.executeQuery();
 				do {
 
-					// WE GOT NEW ORDER ID
+					orderList.add(orderFetcher(rs.getInt(1)));
 
-					ppstmtOrder.setInt(1, rs.getInt(1));
-					rsOrder = ppstmtOrder.executeQuery();
-
-					ArrayList<Product> productList = new ArrayList<Product>();
-					if (rsOrder.next()) {
-
-//						rsOrder = ppstmtOrder.executeQuery();
-						do {
-							// WE GOT NEW PRODUCT ID
-
-							ppstmtProduct.setInt(1, rsOrder.getInt(2));
-							rsProduct = ppstmtProduct.executeQuery();
-
-							if (rsProduct.next()) {
-								do {
-
-//								System.out.println("prod added");
-									// PRODUCT IS ADDED TO PRODUCT ARRAY_LIST
-									productList.add(productFetcher(rsProduct.getInt(1)));
-//											new Product(rsProduct.getInt(1), rsProduct.getString(2),
-//											rsProduct.getDouble(3), rsProduct.getString(4),
-//											, rsProduct.getTime(6),
-//											rsProduct.getTime(7))
-
-								} while (rsProduct.next());
-							} else {
-								throw new ProductNotFoundException(
-										"Product is not added in Product Database. Please add Product First.");
-							}
-
-							orderList.add(new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4),
-									productList, rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8),
-									rs.getTime(9), rs.getTime(10)));
-
-//						System.out.println(orderList);
-						} while (rsOrder.next());
-
-					} else {
-						throw new OrderNotFoundForEmployee(
-								"No order found for this employee ID in OrderProducts table");
-					}
 				} while (rs.next());
+//				rs = ppstmt.executeQuery();
+//				do {
+//
+//					// WE GOT NEW ORDER ID
+//
+//					ppstmtOrder.setInt(1, rs.getInt(1));
+//					rsOrder = ppstmtOrder.executeQuery();
+//
+//					ArrayList<Product> productList = new ArrayList<Product>();
+//					if (rsOrder.next()) {
+//
+////						rsOrder = ppstmtOrder.executeQuery();
+//						do {
+//							// WE GOT NEW PRODUCT ID
+//
+//							ppstmtProduct.setInt(1, rsOrder.getInt(2));
+//							rsProduct = ppstmtProduct.executeQuery();
+//
+//							if (rsProduct.next()) {
+//								do {
+//
+////								System.out.println("prod added");
+//									// PRODUCT IS ADDED TO PRODUCT ARRAY_LIST
+//									productList.add(productFetcher(rsProduct.getInt(1)));
+////											new Product(rsProduct.getInt(1), rsProduct.getString(2),
+////											rsProduct.getDouble(3), rsProduct.getString(4),
+////											, rsProduct.getTime(6),
+////											rsProduct.getTime(7))
+//
+//								} while (rsProduct.next());
+//							} else {
+//								throw new ProductNotFoundException(
+//										"Product is not added in Product Database. Please add Product First.");
+//							}
+//
+//							orderList.add(new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4),
+//									productList, rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8),
+//									rs.getTime(9), rs.getTime(10)));
+//
+////						System.out.println(orderList);
+//						} while (rsOrder.next());
+//
+//					} else {
+//						throw new OrderNotFoundForEmployee(
+//								"No order found for this employee ID in OrderProducts table");
+//					}
+//				} while (rs.next());
 
 			} else {
 				throw new OrderNotFoundForEmployee("No order found for this employee ID");
 			}
 
+			return orderList;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public List<OrderDetails> getOrdersOfCustomer(int customerId)
+			throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
+
+		List<OrderDetails> orderList = new ArrayList<OrderDetails>();
+
+		ResultSet rs = null;
+//		ResultSet rsOrder = null;
+//		ResultSet rsProduct = null;
+
+		String query = "SELECT * FROM APP.ORDERDETAILS WHERE customerId=?";
+//		String queryOrder = "SELECT * FROM APP.ORDERPRODUCTS WHERE orderId=? ";
+//		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
+
+		PreparedStatement ppstmt;
+		try {
+			ppstmt = con.prepareStatement(query);
+
+//			PreparedStatement ppstmtOrder = con.prepareStatement(queryOrder);
+//			PreparedStatement ppstmtProduct = con.prepareStatement(queryProduct);
+
+			ppstmt.setInt(1, customerId);
+			rs = ppstmt.executeQuery();
+
+			if (rs.next()) {
+
+//				rs = ppstmt.executeQuery();
+				do {
+					orderList.add(orderFetcher(rs.getInt(1)));
+				} while (rs.next());
+			} else {
+				throw new OrderNotFoundForEmployee("No order found for this Customer ID");
+			}
 			return orderList;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -544,7 +591,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		List<OrderDetails> updatedOrders = new ArrayList<OrderDetails>();
 
 		// untested
-		String fetchPendingQuery = "SELECT * FROM APP.ORDERDETAILS WHERE STATUS = 'PENDING' WHEN DATEDIFF(day, CURRENT_DATE, CREATEDAT) > 29 ;";
+		String fetchPendingQuery = "SELECT * FROM APP.ORDERDETAILS WHERE STATUS = 'PENDING' AND DATEDIFF(day, CURRENT_DATE, ORDERDATE) > 29 ;";
 
 		ResultSet rs;
 		try {
@@ -601,11 +648,13 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 				// ORDER FETCHED
 				ppstmtOrder.setInt(1, rs.getInt(1));
 				rsOrder = ppstmtOrder.executeQuery();
+				productList = new ArrayList<Product>();
 
 				while (rsOrder.next()) {
 
 					// WE GOT NEW PRODUCT ID
-					productList = new ArrayList<Product>();
+					productList.add(productFetcher(rsOrder.getInt(2)));
+
 //					ppstmtProduct.setInt(1, rsOrder.getInt(2));
 //
 //					rsProduct = ppstmtProduct.executeQuery();
@@ -616,8 +665,8 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 //						do {
 //							// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
 //							System.out.println("product added");
-					productList.add(productFetcher(rsOrder.getInt(2)));
 //						} while (rsProduct.next());
+
 				}
 
 //				}
@@ -630,6 +679,113 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	@Override
+	public Customer updateCustomerPassword(Customer customer) {
+
+		String updateQuery = "UPDATE APP.CUSTOMER SET password = ? WHERE customerId=?";
+
+		try {
+			con.setAutoCommit(false);
+
+			PreparedStatement ppstmt = con.prepareStatement(updateQuery);
+			ppstmt.setString(1, customer.getPassword());
+			ppstmt.setInt(2, customer.getCustomerId());
+
+			boolean status = ppstmt.execute();
+
+			if (status) {
+				con.commit();
+				return customer;
+			} else {
+				return null;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Override
+	public Employee updateEmployeePassword(Employee employee) {
+
+		String updateQuery = "UPDATE APP.EMPLOYEE SET password = ? WHERE employeeId=?";
+
+		try {
+			con.setAutoCommit(false);
+
+			PreparedStatement ppstmt = con.prepareStatement(updateQuery);
+			ppstmt.setString(1, employee.getPassword());
+			ppstmt.setInt(2, employee.getEmployeeId());
+
+			boolean status = ppstmt.execute();
+
+			if (status) {
+				con.commit();
+				return employee;
+			} else {
+				return null;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Override
+	public SessionEntity tokenFetcher(int personId) {
+		// TODO Auto-generated method stub
+		String query = "SELECT * FROM APP.SESSIONENTITY WHERE personId=?";
+		PreparedStatement ppstmt;
+		ResultSet rs;
+		try {
+			ppstmt = con.prepareStatement(query);
+			ppstmt.setInt(1, personId);
+			rs = ppstmt.executeQuery();
+			if(rs.next()) {
+				return new SessionEntity(rs.getInt(1), rs.getString(2));
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}
+
+	@Override
+	public SessionEntity updateToken(SessionEntity sessionEntity) {
+		
+		String query = "UPDATE APP.SESSIONENTITY SET sessionToken = ? WHERE personId=?";
+		PreparedStatement ppstmt;
+		try {
+			con.setAutoCommit(false);
+			ppstmt = con.prepareStatement(query);
+			ppstmt.setString(1, sessionEntity.getSessionToken());
+			ppstmt.setInt(2, sessionEntity.getPersonId());
+			boolean status = ppstmt.execute();
+			if(status) {
+				con.commit();
+				return sessionEntity;
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
