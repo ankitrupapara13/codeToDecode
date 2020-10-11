@@ -2,3 +2,5 @@ INFO    2020-10-09 01:31:36,760 [http-nio-8090-exec-6] com.hsbc.controllers.Prod
 INFO    2020-10-09 01:32:55,394 [http-nio-8090-exec-7] com.hsbc.controllers.ProductController  - /product request received
 INFO    2020-10-09 01:34:21,236 [http-nio-8090-exec-1] com.hsbc.controllers.ProductController  - /product request received
 INFO    2020-10-11 17:52:29,222 [http-nio-8090-exec-5] com.hsbc.controllers.ProductController  - /product request received
+INFO    2020-10-11 18:55:52,650 [http-nio-8090-exec-2] com.hsbc.controllers.GetInvoice  - /getInvoice GET request received
+INFO    2020-10-11 18:57:03,549 [http-nio-8090-exec-2] com.hsbc.controllers.GetInvoice  - /getInvoice GET request received

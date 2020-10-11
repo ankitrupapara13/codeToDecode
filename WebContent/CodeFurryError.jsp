@@ -5,7 +5,7 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
- <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+ <link rel="stylesheet" type="text/css" href="bootstrap.css">
 </head>
 <style>
 .footer-text{
@@ -18,7 +18,7 @@ body{
 }
 .extraDiv{
     height: 60vh;
-    background: #ffffff url('images/Error.svg') no-repeat;
+    background: #ffffff url('../images/Error.svg') no-repeat;
     background-size: cover;
     background-size: 42%;
     background-position-x: center;

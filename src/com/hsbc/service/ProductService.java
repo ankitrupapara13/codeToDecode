@@ -12,6 +12,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,6 +24,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.hsbc.controllers.GetInvoice;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.dto.ProductFileDTO;
@@ -33,7 +36,7 @@ import com.hsbc.models.Product;
 
 public class ProductService {
 	private OrderProcessingDAO productDAO;
-	
+	private static final Logger log = LogManager.getLogger(ProductService.class); 
 	public ProductService() {
 		productDAO = new OrderProcessingDAOImpl();
 	
@@ -54,13 +57,13 @@ public class ProductService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
+					log.error("Error parsing xml file: " + e.getMessage());
 					e.printStackTrace();
 				} catch (SAXException e) {
-					// TODO Auto-generated catch block
+					log.error("Error parsing xml file: " + e.getMessage());
 					e.printStackTrace();
 				} catch (InputStreamEmptyException e) {
-					// TODO Auto-generated catch block
+					log.error("Error parsing xml file: " + e.getMessage());
 					e.printStackTrace();
 				}
 				break;
@@ -68,13 +71,13 @@ public class ProductService {
 				try {
 					return this.addProductsFromJSON(file.getInputStream());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					log.error("Error parsing json file: " + e.getMessage());
 					e.printStackTrace();
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
+					log.error("Error parsing json file: " + e.getMessage());
 					e.printStackTrace();
 				} catch (InputStreamEmptyException e) {
-					// TODO Auto-generated catch block
+					log.error("Error parsing json file: " + e.getMessage());
 					e.printStackTrace();
 				}
 				break;
@@ -82,7 +85,7 @@ public class ProductService {
 				try {
 					throw new InvalidFileFormatException("File format invalid");
 				} catch (InvalidFileFormatException e) {
-					// TODO Auto-generated catch block
+					log.error("Error in file: " + e.getMessage());
 					e.printStackTrace();
 				}
 				break;
@@ -137,8 +140,8 @@ public class ProductService {
 		}
 		productDAO.addProductsToDB(productsArr);
 		
-		System.out.println("Success Count: " + successCount);
-		System.out.println("Failure Count: " + failedCount);
+		log.info("Success Count: " + successCount);
+		log.info("Failure Count: " + failedCount);
 		ProductFileDTO productFileDTO = new ProductFileDTO(successCount, failedCount);
 		
 		return productFileDTO;
@@ -167,6 +170,7 @@ public class ProductService {
 			gstNumber = element.getElementsByTagName("GstNumber")
 										.item(0).getChildNodes().item(0).getNodeValue();
 		}catch(NullPointerException e) {
+			log.error("Error parsing XML Object: " + e.getMessage());
 			return null;
 		}
 		if(productId <= 0 || productName == null || productName == "" || productCategory==null || productCategory=="" || productPrice <= 0 )
@@ -220,8 +224,8 @@ public class ProductService {
 		}
 		productDAO.addProductsToDB(productsArr);
 		
-		System.out.println("Success Count: " + successCount);
-		System.out.println("Failure Count: " + failedCount);
+		log.info("Success Count: " + successCount);
+		log.info("Failure Count: " + failedCount);
 		
 		ProductFileDTO productFileDTO = new ProductFileDTO(successCount, failedCount);
 		
@@ -245,6 +249,7 @@ public class ProductService {
 			productCategory = (String)product.get("productCategory");
 			gstNumber = (String)product.get("gstNumber");
 		}catch(Exception e) {
+			log.error("Error parsing JSON Object: " + e.getMessage());
 			return null;
 		}
 		if(productId <= 0 || productName == null || productPrice <= 0 || productCategory == null || productCategory == "" || gstNumber == null || gstNumber == "")

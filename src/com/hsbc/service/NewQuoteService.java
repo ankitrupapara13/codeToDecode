@@ -9,6 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.hsbc.Security.RSA;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
@@ -26,7 +30,7 @@ import com.hsbc.models.Product;
 
 public class NewQuoteService {
 
-
+	private static final Logger log = LogManager.getLogger(NewQuoteService.class); 
 	private OrderProcessingDAO orderProcessingDAOImpl;
 	private static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 	
@@ -34,8 +38,6 @@ public class NewQuoteService {
 	public NewQuoteService() 
 	{
 		super();
-	
-	
 		orderProcessingDAOImpl = OrderProcessingDAOImpl.getInstance();
 
 		
@@ -48,10 +50,9 @@ public class NewQuoteService {
 		   Customer c=null;
 	       	try {
 				   c=orderProcessingDAOImpl.getCustomerById(customerId);
-				   System.out.println(c);
 			}
 	       	catch (CustomerNotFoundException e) {
-				
+				log.error("Error getting customer data: " + e.getMessage());
 				e.printStackTrace();
 			}
 	       	return c;
@@ -82,10 +83,10 @@ public class NewQuoteService {
 				product= orderProcessingDAOImpl.productFetcher(productIds[j]);
 				totalOrderValue+=product.getProductPrice();
 			} catch (CompanyNotFoundException e) {
-				// TODO Auto-generated catch block
+				log.error("Error calculating costs : " +e.getMessage());
 				e.printStackTrace();
 			} catch (ProductNotFoundException e) {
-				// TODO Auto-generated catch block
+				log.error("Error calculation cost : " +e.getMessage());
 				e.printStackTrace();
 			}
 			
@@ -121,11 +122,11 @@ public class NewQuoteService {
 				try {
 					product= orderProcessingDAOImpl.productFetcher(productIds[j]);
 				} catch (CompanyNotFoundException e) {
-					
+					log.error("Error getting product by ID: " + e.getMessage());
 					e.printStackTrace();
 				} catch (ProductNotFoundException e) 
 				{
-					
+					log.error("Error getting product by ID: " + e.getMessage());
 					e.printStackTrace();
 				}
 				
@@ -174,7 +175,7 @@ public class NewQuoteService {
 				    	try {
 							prodList.add(orderProcessingDAOImpl.productFetcher(productIds[j]));
 						} catch (CompanyNotFoundException | ProductNotFoundException e) {
-							// TODO Auto-generated catch block
+							log.error("Error in saving products to DB: " + e.getMessage());
 							e.printStackTrace();
 						}
 				     	
@@ -214,7 +215,7 @@ public class NewQuoteService {
 		try {
 			return orderProcessingDAOImpl.getProducts();
 		} catch (ProductNotFoundException | CompanyNotFoundException e) {
-			// TODO Auto-generated catch block
+			log.error("Error in getting all products: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
