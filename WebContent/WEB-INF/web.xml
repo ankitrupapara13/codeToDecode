@@ -42,6 +42,11 @@
     <url-pattern>/product</url-pattern>
   </filter-mapping>
   
+   <filter-mapping>
+    <filter-name>SessionAuthFilter</filter-name>
+    <url-pattern>/getInvoice</url-pattern>
+  </filter-mapping>
+  
   <filter-mapping>
     <filter-name>SessionAjaxAuthFilter</filter-name>
     <url-pattern>/approveOrder</url-pattern>

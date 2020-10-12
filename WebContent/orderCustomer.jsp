@@ -79,7 +79,7 @@
         <div class="custdetails">
 
             <p>Customer Name: <span class="blc" id="custName"><%=customer.getName() %></span></p>
-            <p>Customer ID: <span class="blc" id="custId"><%=customer.getCustomerId() %>></span></p>
+            <p>Customer ID: <span class="blc" id="custId"><%=customer.getCustomerId() %></span></p>
             <p>GST: <span class="blc" id="custGst"><%=customer.getGstNumber() %></span></p>
             <p>Address: <span class="blc" id="custAdd"><%=customer.getAddress() %></span></p>
             <p>City: <span class="blc" id="custCity"><%=customer.getCity() %></span></p>
