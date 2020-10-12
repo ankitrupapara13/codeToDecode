@@ -25,7 +25,15 @@ public class EmployeeService {
 	public EmployeeService() {
 		orderProcessingDAO = new OrderProcessingDAOImpl();
 	}
-	
+	/**
+	 * method returns EmployeeDTO object on the basis on employee id
+	 * It fetches:
+	 * 	i. Employee object using employeeId
+	 * 	ii. OrderDetails object using employeeId
+	 * 	iii. Customer Data for each other
+	 * 
+	 * i,ii,iii are then added to EmployeeDTO object and returned
+	 */
 	public EmployeeDTO getEmployeeDetails(int employeeId) {
 		try {
 			Employee employee = orderProcessingDAO.getEmployeeById(employeeId);

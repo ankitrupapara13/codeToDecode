@@ -48,6 +48,8 @@ public class ProductController extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Receives GET request, sets employeee details as request attributes and 
+	 * forwards request to importProductsBK.jsp
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -63,7 +65,7 @@ public class ProductController extends HttpServlet {
 		if( employee > 0) {
 			EmployeeDTO employeeData = employeeService.getEmployeeDetails(employee);
 			request.setAttribute("employee", employeeData);
-			System.out.println(employeeData);
+			
 		}
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
@@ -73,6 +75,7 @@ public class ProductController extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Receives POST request with file, sets request attributes and forwards the request to importProducts.jsp
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

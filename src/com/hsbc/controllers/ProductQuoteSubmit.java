@@ -40,6 +40,7 @@ public class ProductQuoteSubmit extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Receives POST request with order data as parameters forwards it to service layer for addition to db
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		log.info("/ProductQuoteSubmit POST request received");

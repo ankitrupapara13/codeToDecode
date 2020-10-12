@@ -37,12 +37,13 @@ public class ProductQuote1 extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Receives GET request with customerId as parameter, sends back customer data using customerId as JSON 
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
 		log.info("/ProductQuote1 GET request received");
 		String custId=request.getParameter("customerId");
-		Customer customer=newQuoteService.getCustomerData(custId);      //calling service class getCustomerData()
+		Customer customer=newQuoteService.getCustomerData(custId);    
 		String responseStr = this.gson.toJson(customer);
 		response.setContentType("application/json");
 		response.getWriter().print(responseStr);
@@ -51,6 +52,7 @@ public class ProductQuote1 extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Receives POST request and call doGet()
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

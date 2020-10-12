@@ -42,8 +42,12 @@ public class NewQuoteService {
 
 		
 	}
-
-
+	/**
+	 * Method return Customer data on the basis of CustomerId
+	 * 
+	 * @param custId
+	 * @return
+	 */
 	public Customer getCustomerData(String custId) 
 	{
 		   int customerId=Integer.parseInt(custId);
@@ -57,7 +61,13 @@ public class NewQuoteService {
 			}
 	       	return c;
 	 }
-	
+	/**
+	 * Method returns the ProductQuoteDto containing shipping 
+	 * cost and total order value depending upon the product id of string supplied separated by ","
+	 * 
+	 * @param prodIds
+	 * @return
+	 */
 	public ProductQuoteDto calcCosts(String prodIds)
 	{
 		int i=0;
@@ -102,7 +112,13 @@ public class NewQuoteService {
 		return productQuoteDto;
 		
 	}
-	
+	/**
+	 * Method computes the shooping cost on the basis of product and total order value
+	 * 
+	 * @param totalOrderValue
+	 * @param productIds
+	 * @return
+	 */
 	public double calcShippingPrice(double totalOrderValue,int[] productIds)
 	{
 		String categoryId;
@@ -149,7 +165,24 @@ public class NewQuoteService {
 		return shippingCost;
 	
 	}
-	
+	/**
+	 * Receives the order data and if the order data is applicable then
+	 * creates OrderDetails object and passes it to DAO to be saved to database
+	 * 
+	 * 
+	 * @param Date
+	 * @param customerId
+	 * @param employeeId
+	 * @param gstNumber
+	 * @param address
+	 * @param city
+	 * @param phone
+	 * @param email
+	 * @param pincode
+	 * @param prodIds
+	 * @param tov
+	 * @param shippindcst
+	 */
 	public void saveOrderDetailsToDb(String Date,String customerId,String employeeId,String gstNumber,String address,String city,String phone,String email,String pincode,String prodIds,String tov,String shippindcst)
 	{
 	
@@ -192,6 +225,14 @@ public class NewQuoteService {
 		}
 		
 	}
+	/**
+	 * Calculated the result date after adding workdays to date
+	 * and returns it
+	 * 
+	 * @param date
+	 * @param workdays
+	 * @return
+	 */
 	public LocalDate add(LocalDate date, int workdays) {
 	    if (workdays < 1) {
 	        return date;
@@ -210,7 +251,12 @@ public class NewQuoteService {
 
 	    return result;
 	}
-	
+	/**
+	 * Retrieves the list of products from DAO and
+	 * returns it to controller
+	 * 
+	 * @return
+	 */
 	public List<Product> getAllProducts(){
 		try {
 			return orderProcessingDAOImpl.getProducts();
@@ -220,7 +266,16 @@ public class NewQuoteService {
 		}
 		return null;
 	}
-	
+	/**
+	 * Performs login logic for Employee login
+	 * 
+	 * 
+	 * @param employeeId
+	 * @param password
+	 * @return
+	 * @throws EmployeeNotFoundException
+	 * @throws SystemSecurityException
+	 */
 
 	//customer login
 	public Employee employeelogin(int employeeId,String password) throws EmployeeNotFoundException, SystemSecurityException {
@@ -243,7 +298,19 @@ public class NewQuoteService {
 		}
 		return e;
 	}
+
+	/**
+	 * Perform login Logic for Customer
+	 * 
+	 * @param customerId
+	 * @param password
+	 * @return
+	 * @throws SystemSecurityException
+	 * @throws CustomerNotFoundException
+	 */
+
 //	employee login
+
 	public Customer customerLogin(String customerId,String password) throws SystemSecurityException, CustomerNotFoundException {
 		Customer c = orderProcessingDAOImpl.getCustomerById(Integer.parseInt(customerId));
 		if(c!=null) {
@@ -264,14 +331,37 @@ public class NewQuoteService {
 		return c;
 		
 	}
+
+	/**
+	 *  Returns all the orders related to a customer on 
+	 *  the basis of customerId
+	 * 
+	 * @param customerId
+	 * @return
+	 * @throws OrderNotFoundForEmployee
+	 * @throws ProductNotFoundException
+	 * @throws CompanyNotFoundException
+	 */
+
 	
 //	getting the customer order details
+
 	public List<OrderDetails> getCustomerOrderDetailsList(int customerId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException{
 		List<OrderDetails> list = orderProcessingDAOImpl.getOrdersOfCustomer(customerId);
 		return list;
 	}
-	
+
+	/**
+	 * Approves the order on the basis of orderId 
+	 * and returns the OrderDetails object
+	 * 
+	 * @param orderId
+	 * @return
+	 * @throws OrderNotFoundForEmployee
+	 * @throws ProductNotFoundException
+	 */
 	//approving the order
+
 	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException  {
 		return orderProcessingDAOImpl.approveOrder(orderId);
 	}
