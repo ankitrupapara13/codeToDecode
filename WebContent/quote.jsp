@@ -213,6 +213,13 @@
         this.disabled = false;
         return;
     }
+	var date = new Date;
+	var orderD = new Date(orderDate);
+	if(date.getDate() !== orderD.getDate() || date.getMonth() !== orderD.getMonth() || date.getFullYear() !== orderD.getFullYear()){
+		alert('Order date should be today\'s date');
+		this.disabled = false;
+		return;
+	}
     
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {

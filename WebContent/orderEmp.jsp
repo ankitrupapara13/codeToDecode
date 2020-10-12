@@ -11,22 +11,7 @@
 <head>
 <meta charset="ISO-8859-1">
  <title>Order Management Employee</title>
-    <script>
-        function onLoad() {
-
-            
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("displayInvoice").innerHTML = xhr.responseText;
-                }
-            }
-
-
-            xhr.open('GET', './demo', true);
-            xhr.send(); 
-        }
-    </script>
+   
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
     <link rel="stylesheet" type="text/css" href="orderEmp.css">
 </head>
@@ -47,9 +32,7 @@
             <h1 class="display-4">Welcome,<span id="empName"><%=employeeDTO.getUserName() %></span></h1>
             <p class="lead">Find all your order related stuff in one place!</p>
             <hr style=" border: 2px solid red;"><br>
-            <p class="lead">
-                <a class="btn btn-primary btn-danger" href="#" role="button">Learn more</a>
-            </p>
+           
         </div>
     </div>
     <div class="empdetails">
@@ -71,6 +54,7 @@
                     <th scope="col">Order Value</th>
                     <th scope="col">Customer City</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Invoice</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,7 +68,9 @@
             		double orderValue = orderDetails.get(i).getTotalOrderValue();
             		Date orderDate = orderDetails.get(i).getOrderDate();
             		String status = orderDetails.get(i).getStatus();
-            		
+            		String disabled = "disabled";
+            		if(orderDetails.get(i).getStatus().equals("COMPLETED"))
+            			disabled = "";
             
             %>
                 <tr>
@@ -95,7 +81,10 @@
                     <td class="orderValue"><%=orderValue %></td>
                     <td class="custCity"><%=city %></td>
                     <td class="status"><%=status %></td>
-
+					<td id="invoice"><button type="button"
+		                                    onclick="onLoad('<%=orderId%>')" class="btn btn-danger" <%=disabled%>>View Invoice</button></a></td>
+		                                    
+		                                    
                 </tr>
                 <%} %>
             
@@ -106,14 +95,10 @@
 
     <hr id="h">
 
-    <div id="displayInvoiceHere"></div><br>
-    <div style="padding-left: 20px;">
-        <a href="#" target="_blank"> <button type="button" id="displayInvoice" onlick="onLoad()"
-                class="btn btn-danger">View Invoice</button></a>
-    </div><br>
-    <a href="./getAddQuote" style="padding-left: 20px;">Add New Quote</a>
-    <br>
-    <a href="./product" target="_blank" style="padding-left: 20px;">Import Products</a>
+    
+    <button onclick="addNewQuote(event)" class="btn btn-primary" style="padding-left: 20px;margin-left:14px;">Add New Quote</button>
+   
+    <button onclick="addProduct(event)" class="btn btn-primary" style="padding-left: 20px;margin-left:14px;">Import Products</button>
     <br><br>
 
     <div class="navbar navbar-dark bg-dark footer-content-outer-div">
@@ -123,6 +108,20 @@
             </div>
         </footer>
     </div>
-
+	 <script>
+      
+            function onLoad(orderId){
+            	document.location.href="./getInvoice?orderId="+orderId;
+            }
+            function addNewQuote(event){
+            	event.preventDefault();
+            	window.location.href = './getAddQuote';
+            }
+            function addProduct(){
+            	event.preventDefault();
+            	window.open('./product', '_blank').focus();
+            }
+        	
+    </script>
 </body>
 </html>
