@@ -28,11 +28,13 @@ public class Approve extends HttpServlet {
         newQuoteService = new NewQuoteService();
         invserv = new InvoiceService();
     }
-// to be called by ajax
+ // to be called by ajax
+//   	This servlet is called by customer and this change the status of the order from PENDING to APPROVED 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 			try {
 				System.out.println("approved called");
+				//calling the Service which internally calls the DAO  to change the order status
 				OrderDetails fOrder = newQuoteService.approveOrder(Integer.valueOf(request.getParameter("orderId")));
 				response.getWriter().println("Approved");
 				invserv.generateInvoice(fOrder);

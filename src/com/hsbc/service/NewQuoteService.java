@@ -222,43 +222,56 @@ public class NewQuoteService {
 	}
 	
 
+	//customer login
 	public Employee employeelogin(int employeeId,String password) throws EmployeeNotFoundException, SystemSecurityException {
 		Employee e = orderProcessingDAOImpl.getEmployeeById(employeeId);
 		if(e!=null) {
 			String passFromDB = e.getPassword();
 			try {
+				System.out.println("password + "+passFromDB);
+				//checking the encrypted password of the entity
 				passFromDB = RSA.decrypt(e.getPassword());
+				
 			} catch (SystemSecurityException ex) {
 				if(passFromDB.equals(password)) {
 					password = RSA.encrypt(password);
 					//run an update PASSWORD for e.setpassword();
-				}
+					e.setPassword(password);
+					orderProcessingDAOImpl.updateEmployeePassword(e);
+				}else return null;
 			}
 		}
 		return e;
 	}
+//	employee login
 	public Customer customerLogin(String customerId,String password) throws SystemSecurityException, CustomerNotFoundException {
 		Customer c = orderProcessingDAOImpl.getCustomerById(Integer.parseInt(customerId));
 		if(c!=null) {
 			String passFromDB = c.getPassword();
 			try {
+				//checking the encrypted password of the entity
 				passFromDB = RSA.decrypt(c.getPassword());
 			} catch (Exception ex) {
+				System.out.println(passFromDB+"  "+password);
 				if(passFromDB.equals(password)) {
 					password = RSA.encrypt(password);
 					//run an update PASSWORD for e.setpassword();
-				}
+					c.setPassword(password);
+					orderProcessingDAOImpl.updateCustomerPassword(c);
+				}else return null;
 			}
 		}
 		return c;
 		
 	}
 	
+//	getting the customer order details
 	public List<OrderDetails> getCustomerOrderDetailsList(int customerId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException{
 		List<OrderDetails> list = orderProcessingDAOImpl.getOrdersOfCustomer(customerId);
 		return list;
 	}
 	
+	//approving the order
 	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException  {
 		return orderProcessingDAOImpl.approveOrder(orderId);
 	}

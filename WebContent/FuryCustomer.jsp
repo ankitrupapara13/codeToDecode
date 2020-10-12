@@ -134,7 +134,7 @@ border-radius: 8px;
             <div class="textbox">
                
                 <label for ="customerPassword"></label>
-                 <input type="password" placeholder="Password"id="password" name="customerPassword" required>
+                 <input type="password" placeholder="Password"id="password" name="password" required>
             </div>
            <div>
             <input class="customerbutton" type="submit" value="Log In">
