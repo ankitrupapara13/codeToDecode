@@ -5,7 +5,6 @@ import java.util.List;
 import com.hsbc.daoImpl.OrderProcessingDAOImpl;
 import com.hsbc.exceptions.CompanyNotFoundException;
 import com.hsbc.exceptions.CustomerNotFoundException;
-import com.hsbc.exceptions.DatabaseModificationFailedException;
 import com.hsbc.exceptions.EmployeeNotFoundException;
 import com.hsbc.exceptions.InvoiceNotFoundException;
 import com.hsbc.exceptions.OrderNotFoundForEmployee;
@@ -31,20 +30,20 @@ public interface OrderProcessingDAO {
 	List<OrderDetails> getOrdersOfCustomer(int customerId)
 			throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException;
 
-	Invoice addInvoiceToDB(Invoice invoice) throws DatabaseModificationFailedException;
+	Invoice addInvoiceToDB(Invoice invoice);
 
 	Invoice getInvoiceByOrderId(int orderId)
-			throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException, CompanyNotFoundException;
+			throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException;
 
-	void addProductsToDB(Product products[]) throws DatabaseModificationFailedException;
+	void addProductsToDB(Product products[]);
 
 	List<Product> getProducts() throws ProductNotFoundException, CompanyNotFoundException;
 
-	OrderDetails addOrdertoDB(OrderDetails orderDetails) throws DatabaseModificationFailedException;
+	OrderDetails addOrdertoDB(OrderDetails orderDetails);
 
-	OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException;
+	OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException;
 
-	List<OrderDetails> completeOrder() throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException; // CRON Job
+	List<OrderDetails> completeOrder() throws OrderNotFoundForEmployee, ProductNotFoundException; // CRON Job
 
 	List<OrderDetails> expiryOrder() throws OrderNotFoundForEmployee, ProductNotFoundException; // CRON Job
 
@@ -56,7 +55,7 @@ public interface OrderProcessingDAO {
 	
 	SessionEntity updateToken(SessionEntity sessionEntity);
 	
-	OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException; // Order Fetcher
+	OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException; // Order Fetcher
 																										// is working
 																										// behind the
 																										// scenes to
