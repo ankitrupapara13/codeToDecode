@@ -71,8 +71,8 @@
     <div style="margin-top: 7%;" class="container">
 
         <div class="jumbotron">
-            <h1 class="display-4">Welcome,<span id="custName"><%=customer.getName() %></span></h1>
-            <p class="lead">Upload Files!</p>
+            <h1 class="display-4">Welcome,&nbsp;<span id="custName"><%=customer.getName() %></span></h1>
+            <p class="lead">Dashboard</p>
             <hr style=" border: 2px solid red;"><br>
         </div>
 
