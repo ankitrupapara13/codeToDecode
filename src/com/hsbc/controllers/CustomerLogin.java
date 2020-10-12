@@ -27,20 +27,23 @@ public class CustomerLogin extends HttpServlet {
 //		get the id and password 
 		String customerId = request.getParameter("customerId");
 		String password = request.getParameter("password");
-//		CustomerService cs = new CustomerService();
 		try {
 			Customer c = null;
 			if(( c = newQuoteService.customerLogin(customerId, password))!=null) {
+				//successful login
 				SessionManager.createSession(request, response, c.getCustomerId());
 				request.getRequestDispatcher("./orderList").forward(request, response);
 			}else {
+				//wrong password
 				request.setAttribute("loginMessage", "CustomerId Or Password is incorrect");
 				request.getRequestDispatcher("FuryCustomer.jsp").forward(request, response);
 			}
 		}catch(SystemSecurityException sse) {
+			//Encryption error
 			request.setAttribute("errorMessage", "Server Error Try After Sometime");
 			request.getRequestDispatcher("Error.jsp").forward(request, response);
 		}catch(CustomerNotFoundException e) {
+			//customerId Does not exists in the database
 			request.setAttribute("loginMessage", "CustomerId Or Password is incorrect");
 			request.getRequestDispatcher("FuryCustomer.jsp").forward(request, response);
 		}

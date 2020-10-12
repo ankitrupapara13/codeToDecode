@@ -28,20 +28,22 @@ public class OrderList extends HttpServlet {
         super();
         newQuoteService = new NewQuoteService();
     }
-
+    //called by the customer to get the list of order need to pass the customerId
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String customerId = request.getParameter("customerId");
 		try {
+			//getting the session data to get the id
 			SessionEntity se = SessionManager.getSessionData(request);
 			List<OrderDetails> list = newQuoteService.getCustomerOrderDetailsList(se.getPersonId());
 			request.setAttribute("orderList", list);
 			request.setAttribute("customerData",newQuoteService.getCustomerData(String.valueOf(se.getPersonId())));
 		} catch (SessionExpiredException e) {
+			//session Expired due to inactivity
 			request.setAttribute("errorMessage", "Session Expired Due to Inactivity");
 			request.getRequestDispatcher("home.html").forward(request, response);
 		} catch (OrderNotFoundForEmployee | ProductNotFoundException |CompanyNotFoundException e) {
 			//error page
-		}
+		} 	
+		//redirecting to orderCustomer.jsp to show the list of product and here the user can see the invoice and approve the pending order as well
 		request.getRequestDispatcher("/orderCustomer.jsp").forward(request, response);
 	}
 	
