@@ -23,7 +23,11 @@ public class InvoiceService
 	public InvoiceService() {
 		this.orderProcessingDAO = new OrderProcessingDAOImpl();
 	}
-		
+	/**
+	 * Method generates an Invoice using the OrderDetails passed.
+	 * Also using totalOrderValue, it computes GST amount and totalInvoiceValue and adds it to Invoice object
+	 * Then Invoice object is passed to DAO to be added to database
+	 */
 	public Invoice generateInvoice(OrderDetails obj3)
 	{
 		//Calling DAO to get order details by orderID
@@ -35,7 +39,7 @@ public class InvoiceService
 		obj1.setOrderDetails(obj3);
 		double gstAmount = this.generateGST(obj3.getTotalOrderValue());
 		obj1.setGstAmount(gstAmount);
-		double totalInvoiceValue=gstAmount+obj3.getShippingCost();
+		double totalInvoiceValue=obj3.getTotalOrderValue()+gstAmount+obj3.getShippingCost();
 		obj1.setTotalInvoiceAmount(totalInvoiceValue);
 		obj1.setInvoiceCreatedAt(new Time(System.currentTimeMillis()));
 		obj1.setInvoiceUpdatedAt(new Time(System.currentTimeMillis()));
@@ -44,11 +48,17 @@ public class InvoiceService
 		
 		return invoiceResp;
 	}
-
-	public double generateGST(double totalInvoiceAmount)
+	/*
+	 *Helper Methods uses totalOrderValue to compute applicable GST
+	 */
+	public double generateGST(double totalOrderValue)
 	{
-		return (double) (0.10*totalInvoiceAmount);
+		return (double) (0.10*totalOrderValue);
 	}
+	/*
+	 * Methods uses orderId to return the get the 
+	 * Invoice from DAO
+	 */
 	public Invoice getInvoiceByOrderId(int orderId) {
 		try {
 			return this.orderProcessingDAO.getInvoiceByOrderId(orderId);

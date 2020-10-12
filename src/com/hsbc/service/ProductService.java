@@ -41,9 +41,12 @@ public class ProductService {
 		productDAO = new OrderProcessingDAOImpl();
 	
 	}
-	/*
+	/**
 	 * Methods calls method to add XML or JSON object to 
 	 * database using the extension of file upload
+	 * 
+	 * @param file
+	 * @return
 	 */
 	public ProductFileDTO addProduct(Part file) {
 		String name = file.getSubmittedFileName();
@@ -93,14 +96,22 @@ public class ProductService {
 		}
 		return new ProductFileDTO();
 	}
-	/*
-	 * Method parses XML file using:
+	/**
+	 * 
+	 *   Method parses XML file using:
 	 * 	i. Create a document of XML inputstream using DocumentBuilder
 	 *  ii. if document is null DocumentNotFound exception thrown else further process
 	 *  iii. List of nodes of XML is obtained in XML file
 	 *  iv. Nodes list is iteratively traversed and when node of type ELEMENT_NODE encountered, information
 	 *  	is retrieved and an object of Product is created
-	 *  v. ProductDAO's method is called to store the object to DB
+	 *  v. ProductDAO's method is called to store the object to DB 
+	 * 
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws InputStreamEmptyException
 	 */
 	private ProductFileDTO addProductsFromXML(InputStream inputStream) throws IOException, ParserConfigurationException, SAXException, InputStreamEmptyException {
 		if(inputStream == null) {
@@ -128,7 +139,7 @@ public class ProductService {
 					successCount++;
 					products.add(product);
 				}
-//				productDAO.addProductsToDB(product);
+
 				
 			}
 		}
@@ -147,8 +158,11 @@ public class ProductService {
 		return productFileDTO;
 		
 	}
-	/*
+	/**
 	 * Method parses individual node of xml element to retrieve the information
+	 * 
+	 * @param node
+	 * @return
 	 */
 	private Product processXMLObject(Node node) {
 		Element element = (Element) node;
@@ -184,13 +198,19 @@ public class ProductService {
 		return productObj;
 		
 	}
-	/*
-	 * Method parses JSON file using JSONParser by:
+	/**
+	 *  Method parses JSON file using JSONParser by:
 	 * 	i. Calling parse() on inputstream
 	 * 	ii. Creation of JSONArray of objects on JSON file
 	 * 	iii. Individual object of JSON is then used to extract different fields and 
 	 * 		Product object is created out it
 	 * 	iv. ProductDAO's method is called to store object to DB
+	 * 
+	 * @param inputstream
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws InputStreamEmptyException
 	 */
 	private ProductFileDTO addProductsFromJSON(InputStream inputstream) throws IOException, ParseException, InputStreamEmptyException {
 		if(inputstream == null) {
@@ -232,8 +252,11 @@ public class ProductService {
 		return productFileDTO;
 		
 	}
-	/*
+	/**
 	 * Method parses JSON object to extract fields and created an object out of it
+	 * 
+	 * @param jsonObject
+	 * @return
 	 */
 	private Product processJSONObject(JSONObject jsonObject) {
 		JSONObject product = (JSONObject) jsonObject;
