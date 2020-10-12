@@ -15,7 +15,18 @@ body {
   #h{
     border: 2px solid red;
   }
-
+  .custdetails{
+    color: red;
+    
+    padding-left: 30px;
+  
+  }
+  table{
+  	width: 100% !important;
+  }
+  #addMoreProductsDiv{
+    display: none;
+  }
   .footer-text{
   	margin-top:20px;
   	color: #ffffff;
@@ -25,7 +36,8 @@ body {
   }
   .footer-content-outer-div{
   	justify-content: center;
-  	position: fixed;
-  	bottom: 0;
-  	width:100%;
+  }
+  .section-heading{
+    font-size:20px;
+    font-weight: 600;
   }
