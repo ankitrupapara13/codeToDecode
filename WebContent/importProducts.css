@@ -25,4 +25,7 @@ body {
   }
   .footer-content-outer-div{
   	justify-content: center;
+  	position: fixed;
+  	bottom: 0;
+  	width:100%;
   }
