@@ -38,9 +38,9 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	static {
 		try {
-			OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-			con = DriverManager.getConnection("jdbc:derby:C:\\Users\\Ankit\\MyDB;create=true", "admin", "derby");
+				OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
+				Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+			con = DriverManager.getConnection("jdbc:derby:C:\\Users\\ujjwa\\testDB;create=true", "admin", "derby");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}

@@ -50,7 +50,7 @@
             xhr.send();
         }
         function onLoad( orderId){
-        	document.location.href="./invoiceData?orderId="+orderId;
+        	document.location.href="./getInvoice?orderId="+orderId;
         }
         
         
