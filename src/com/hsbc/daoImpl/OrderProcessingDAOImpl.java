@@ -14,6 +14,7 @@ import java.util.List;
 import com.hsbc.dao.OrderProcessingDAO;
 import com.hsbc.exceptions.CompanyNotFoundException;
 import com.hsbc.exceptions.CustomerNotFoundException;
+import com.hsbc.exceptions.DatabaseModificationFailedException;
 import com.hsbc.exceptions.EmployeeNotFoundException;
 import com.hsbc.exceptions.InvoiceNotFoundException;
 import com.hsbc.exceptions.OrderNotFoundForEmployee;
@@ -232,7 +233,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override
-	public Invoice addInvoiceToDB(Invoice invoice) {
+	public Invoice addInvoiceToDB(Invoice invoice) throws DatabaseModificationFailedException {
 
 		String queryInvoice = "INSERT INTO APP.INVOICE VALUES(?,?,?,?,?,?,?,?,?)";
 		String counter = "SELECT COUNT(*) AS TOTALENTRIES FROM APP.INVOICE";
@@ -261,7 +262,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 				if (status > 0) {
 					con.commit();
 				} else {
-
+					throw new DatabaseModificationFailedException("Database modification failed... Please recheck sent data.");
 				}
 			}
 		} catch (SQLException e) {
@@ -274,7 +275,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	@Override
 	public Invoice getInvoiceByOrderId(int orderId)
-			throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException {
+			throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException, CompanyNotFoundException {
 		// TODO Auto-generated method stub
 
 		ResultSet rs = null;
@@ -345,7 +346,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override
-	public void addProductsToDB(Product[] products) {
+	public void addProductsToDB(Product[] products) throws DatabaseModificationFailedException {
 
 		String queryOrderProduct = "INSERT INTO APP.PRODUCT VALUES(?,?,?,?,?,?,?)";
 		String counter = "SELECT COUNT(*) AS TOTALENTRIES FROM APP.PRODUCT";
@@ -375,6 +376,9 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 					if (status > 0) {
 						con.commit();
 					}
+					else {
+						throw new DatabaseModificationFailedException("Database modification failed... Please recheck sent data.");
+					}
 					i++;
 				}
 			}
@@ -386,7 +390,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override
-	public OrderDetails addOrdertoDB(OrderDetails orderDetails) {
+	public OrderDetails addOrdertoDB(OrderDetails orderDetails) throws DatabaseModificationFailedException {
 		// TODO Auto-generated method stub
 		String query = "INSERT INTO APP.ORDERDETAILS VALUES(?,?,?,?,?,?,?,?,?,?)";
 		String queryOrderProduct = "INSERT INTO APP.ORDERPRODUCTS VALUES(?,?)";
@@ -430,6 +434,8 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 				if (status > 0) {
 					con.commit();
+				}else {
+					throw new DatabaseModificationFailedException("Database modification failed... Please recheck sent data.");
 				}
 			}
 			return orderDetails;
@@ -441,7 +447,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override
-	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
+	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
 		// TODO Auto-generated method stub
 
 		System.out.println("in approve order with id " + orderId);
@@ -462,7 +468,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	@Override // CRON
-	public List<OrderDetails> completeOrder() throws OrderNotFoundForEmployee, ProductNotFoundException {
+	public List<OrderDetails> completeOrder() throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
 
 		List<OrderDetails> updatedOrders = new ArrayList<OrderDetails>();
 
@@ -536,7 +542,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
-	public OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
+	public OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
 
 		String query = "SELECT * FROM APP.ORDERDETAILS WHERE orderId=?";
 		String queryOrder = "SELECT * FROM APP.ORDERPRODUCTS WHERE orderId=?";
@@ -552,26 +558,41 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 			ppstmt.setInt(1, orderId);
 			rs = ppstmt.executeQuery();
 
-			while (rs.next()) {
+			if (rs.next()) {
 
-				// ORDER FETCHED
-				ppstmtOrder.setInt(1, rs.getInt(1));
-				rsOrder = ppstmtOrder.executeQuery();
-				productList = new ArrayList<Product>();
+				do {
 
-				while (rsOrder.next()) {
+					// ORDER FETCHED
+					ppstmtOrder.setInt(1, rs.getInt(1));
+					rsOrder = ppstmtOrder.executeQuery();
+					productList = new ArrayList<Product>();
 
-					// WE GOT NEW PRODUCT ID
-					productList.add(productFetcher(rsOrder.getInt(2)));
+					if (rsOrder.next()) {
 
-				}
+						do {
+							// WE GOT NEW PRODUCT ID
+							productList.add(productFetcher(rsOrder.getInt(2)));
+						} while (rsOrder.next());
 
-				return (new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), productList,
-						rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8), rs.getTime(9),
-						rs.getTime(10)));
+					} else {
+
+						throw new ProductNotFoundException();
+
+					}
+
+					return (new OrderDetails(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), productList,
+							rs.getDouble(5), rs.getDouble(6), rs.getString(7), rs.getString(8), rs.getTime(9),
+							rs.getTime(10)));
+
+				} while (rs.next());
+
+			} else {
+
+				throw new OrderNotFoundForEmployee("Order not Found");
 
 			}
-		} catch (SQLException | CompanyNotFoundException e) {
+
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
