@@ -98,7 +98,7 @@
                 document.getElementById('file-input-label').innerHTML = 'Choose file';
                 document.getElementById('file-form').reset();
             }	
-            xhr.open('POST', 'http://localhost:8090/orderProcessing/product', true);
+            xhr.open('POST', './product', true);
             xhr.send(data);
             this.disable = false;
         })
