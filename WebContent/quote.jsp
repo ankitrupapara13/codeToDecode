@@ -260,7 +260,7 @@
                 '&totalOrderValue=' + totalOrderValue + '&shippingCosts=' + shippingCost + '&employeeId=' + employeeId;
       
 
-      xhr.open('POST','http://localhost:8090/orderProcessing/ProductQuoteSubmit' + obj, true);
+      xhr.open('POST','./ProductQuoteSubmit' + obj, true);
       xhr.send();
       this.disabled = false;
   })
@@ -283,7 +283,7 @@
 
       customerId = document.getElementById('quoteUserId').value;
       if(parseInt(customerId) > 0){ 
-        xhr.open('GET', 'http://localhost:8090/orderProcessing/ProductQuote1?customerId=' + customerId, true);
+        xhr.open('GET', './ProductQuote1?customerId=' + customerId, true);
         xhr.send();
       }else{
         alert('Invalid user id');
@@ -319,7 +319,7 @@
       }
 
       // var productsIds = document.querySelectorAll('input[name=products]:checked');
-      xhr.open('GET', 'http://localhost:8090/orderProcessing/getProducts', true);
+      xhr.open('GET', './getProducts', true);
       xhr.send();
       this.disabled = false;
  })
@@ -378,7 +378,7 @@
         productIds.push(productId.value);
       })
       var param = productIds.join(",");
-      xhr.open('GET', 'http://localhost:8090/orderProcessing/ProductQuote2?productIds=' + param, true);
+      xhr.open('GET', './ProductQuote2?productIds=' + param, true);
       xhr.send();
       this.disabled = false;
  })

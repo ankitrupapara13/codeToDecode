@@ -29,7 +29,7 @@
     
     <div style="margin-top: 7%;" class="container">
         <div class="jumbotron">
-            <h1 class="display-4">Welcome,<span id="empName"><%=employeeDTO.getUserName() %></span></h1>
+            <h1 class="display-4">Welcome,&nbsp;<span id="empName"><%=employeeDTO.getUserName() %></span></h1>
             <p class="lead">Find all your order related stuff in one place!</p>
             <hr style=" border: 2px solid red;"><br>
            

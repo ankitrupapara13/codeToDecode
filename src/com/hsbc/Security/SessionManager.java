@@ -37,10 +37,10 @@ public class SessionManager {
     		}
     	}
     	session = request.getSession(true);
-    	System.out.println("Session created");
+    
     	String sessionText = personId+""+System.currentTimeMillis();
         String sessionToken = RSA.encrypt(sessionText);
-        System.out.println("session Token: "+sessionToken);
+        
         SessionEntity sobj = new SessionEntity(personId,sessionToken);
 //        run an update command query
         orderProcessingDAOImpl.updateToken(sobj);

@@ -40,7 +40,7 @@ public class Auth implements Filter {
 	    HttpSession session = request.getSession(false);
 	    SessionEntity sessionObj = (session != null) ? (SessionEntity) session.getAttribute("sessionObject") : null;
 	    String loginURL = request.getContextPath() + "/home.html"; 
-	    System.out.println("in filter");
+	  
 	    if (sessionObj == null && !request.getRequestURI().equals(loginURL)) {
 	    	if(request.getCookies()!=null)
 	    		request.setAttribute("errorMessage", "Session Expired Login Again");
@@ -49,12 +49,12 @@ public class Auth implements Filter {
 	    	try {
 				SessionManager.checkToken(sessionObj);
 				request.setAttribute("sessionObject", sessionObj);
-				System.out.println("checked");
+				
 		        chain.doFilter(request, response);
 			} catch (UnAuthAccessException e) {
 				if(request.getCookies()!=null)
 		    		request.setAttribute("errorMessage", e.getMessage());
-				System.out.println("unAuth");
+				
 		    	response.sendRedirect(loginURL);
 			}
 	    }
