@@ -1,3 +1,4 @@
+<%@page import="com.hsbc.Security.SessionManager"%>
 <%@page import="com.hsbc.models.Product"%>
 <%@page import="java.util.List"%>
 <%@page import="com.hsbc.models.Customer"%>
@@ -203,8 +204,8 @@
     var productIds = productIds.join(",");
     var totalOrderValue = document.getElementById('totalOrderValue').value;
     var shippingCost = document.getElementById('shippingCost').value;
-    var employeeId = '104';
-
+    var employeeId = <%=SessionManager.getSessionData(request).getPersonId()%>;
+	
     if(orderDate.trim() == ''|| customerId.trim() == '' || shippingAddress.trim() == '' || city.trim() == '' 
       || phoneNumber.trim() == '' || email.trim() == '' || pincode.trim() == '' || productIds == null 
       || productIds.trim() == '' || totalOrderValue.trim(0) == '' || shippingCost.trim() == '' || employeeId.trim == ''){
@@ -221,8 +222,8 @@
         		document.location.href="home.html";
         		}
         	else{
-        		alert('Form submitted successfully')
-                window.location.href="orderEmp.html";
+        		alert('Data submitted successfully')
+                history.go(-1)
 			}
           
          

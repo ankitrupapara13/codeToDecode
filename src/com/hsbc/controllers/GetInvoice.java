@@ -23,7 +23,12 @@ public class GetInvoice extends HttpServlet {
 		super();
 		invoiceService = new InvoiceService();
 	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * Receives GET request with orderId as param, sets invoice object to attribute to request and forwards the request
+	 * to Invoice.jsp
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		log.info("/getInvoice GET request received");
@@ -35,7 +40,11 @@ public class GetInvoice extends HttpServlet {
 		request.getRequestDispatcher("Invoice.jsp").forward(request, response);
 
 	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * Receives POST request and forwards it to doGET
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		log.info("/getInvoice POST request received");

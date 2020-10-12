@@ -36,6 +36,7 @@ public class GetProducts extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Receives GET request and sends all product data as JSON response
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		log.info("/getProducts GET request receieved");

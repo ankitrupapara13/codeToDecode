@@ -20,41 +20,37 @@ import com.hsbc.models.SessionEntity;
 public class SessionManager {
 	static final int ttl = 1200;
 	private static  OrderProcessingDAO orderProcessingDAOImpl = new OrderProcessingDAOImpl();
+	
+	//creating a new session every time the user try to log in
     public static void createSession(HttpServletRequest request,HttpServletResponse response,int personId) throws SystemSecurityException{
     	HttpSession session = request.getSession(false);
     	if(session!=null) {
+    		//invalidating the old session
     		session.invalidate();
-    		session = request.getSession(true);
-    		System.out.println("Session created");
-        	String sessionText = personId+""+System.currentTimeMillis();
-            String sessionToken = RSA.encrypt(sessionText);
-            System.out.println("session Token: "+sessionToken);
-            SessionEntity sobj = new SessionEntity(personId,sessionToken);
-//            run an update command query
-            orderProcessingDAOImpl.updateToken(sobj);
-            session.setAttribute("sessionObject", sobj);
-            session.setMaxInactiveInterval(ttl);
     	}else {
+    		//checking first time user
     		Cookie c[] = request.getCookies();
     		if(c==null) {
     			Cookie ck=new Cookie("user",personId+"");
     			response.addCookie(ck);
     			ck.setMaxAge(100000);
     		}
-    		session = request.getSession(true);
-    		System.out.println("Session created");
-        	String sessionText = personId+""+System.currentTimeMillis();
-            String sessionToken = RSA.encrypt(sessionText);
-            System.out.println("session Token: "+sessionToken);
-            SessionEntity sobj = new SessionEntity(personId,sessionToken);
-//            run an update command query
-            orderProcessingDAOImpl.updateToken(sobj);
-            session.setAttribute("sessionObject", sobj);
-            session.setMaxInactiveInterval(ttl);
     	}
+    	session = request.getSession(true);
+    	System.out.println("Session created");
+    	String sessionText = personId+""+System.currentTimeMillis();
+        String sessionToken = RSA.encrypt(sessionText);
+        System.out.println("session Token: "+sessionToken);
+        SessionEntity sobj = new SessionEntity(personId,sessionToken);
+//        run an update command query
+        orderProcessingDAOImpl.updateToken(sobj);
+        session.setAttribute("sessionObject", sobj);
+//        setting max lived time 
+        session.setMaxInactiveInterval(ttl);
         
     }
     
+//    checking the exixting session
     public static void checkToken(SessionEntity session) throws UnAuthAccessException {
     	if(session!=null) {
     		SessionEntity sessionFromDB = null;
@@ -68,6 +64,7 @@ public class SessionManager {
     	}
     }
     
+//    deleting the session manually
     public static void deleteSession(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
     	HttpSession session = request.getSession(false);
     	if(session!=null) {
@@ -75,6 +72,8 @@ public class SessionManager {
     	}
     	request.getRequestDispatcher("home.html").forward(request, response);
     }
+    
+//    getting the SessionEntity object from session
     public static SessionEntity getSessionData(HttpServletRequest request) throws SessionExpiredException {
     	HttpSession session = request.getSession(false);
     	SessionEntity se = null;

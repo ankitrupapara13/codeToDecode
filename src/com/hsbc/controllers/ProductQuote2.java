@@ -39,6 +39,7 @@ public class ProductQuote2 extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Receives GET request with productIds as parameter, sends back computed costs as JSON 
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		log.info("/ProductQuote2 GET request received");
@@ -50,6 +51,7 @@ public class ProductQuote2 extends HttpServlet {
 	 }
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Receives POST request and calls doGet()
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		log.info("/ProductQuote2 POST request received");

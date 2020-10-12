@@ -38,7 +38,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 	}
 
 	static {
-		try {
+		try {	
 			@SuppressWarnings("unused")
 			OrderProcessingDAO emImpl = OrderProcessingDAOImpl.getInstance();
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
