@@ -33,7 +33,7 @@ public class Approve extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 			try {
-				System.out.println("approved called");
+				
 				//calling the Service which internally calls the DAO  to change the order status
 				OrderDetails fOrder = newQuoteService.approveOrder(Integer.valueOf(request.getParameter("orderId")));
 				response.getWriter().println("Approved");

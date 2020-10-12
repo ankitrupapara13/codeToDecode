@@ -28,15 +28,36 @@ import com.hsbc.models.SessionEntity;
 
 public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
+	/* 
+	 * @ Param
+	 * con of type Connection
+	 * */
 	private static Connection con;
+	
+	/* Static type
+	 * To get Single instance of this class throughout the life-cycle.
+	 * Every time, whenever instance of is called, same instance will pe passed to the caller. 
+	 * */
 	private static OrderProcessingDAO single_instance = null;
 
+	/*
+	 * This function will return the single_instance if it is already created, otherwise 
+         * it will call the constructor of the class and initialize the static data member.
+         * @param  - None
+         * @return   instance of type OrderProcessingDAO
+         */
+	
 	public static OrderProcessingDAO getInstance() {
 		if (single_instance == null)
 			single_instance = new OrderProcessingDAOImpl();
 		return single_instance;
 	}
 
+	/*
+	*  Static block, which will be called when class will be loaded.
+	*  This block will assign value to the con(of type Connection)
+	*  And it will throw exception if passed values are wrong.
+	*/
 	static {
 		try {	
 			@SuppressWarnings("unused")
@@ -48,6 +69,11 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		}
 	}
 
+	/**
+	* This method will return the Employee object based on the employeeId.
+        * @param  employeeId unique number given to each employee.
+        * @return   Object of type Employee
+        */
 	@Override
 	public Employee getEmployeeById(int employeeId) throws EmployeeNotFoundException {
 		// TODO Auto-generated method stub
@@ -72,6 +98,11 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return emp;
 	}
 
+	/**
+	* This method will return the Customer object based on the customerId.
+        * @param  employeeId unique number given to each customer.
+        * @return  Object of type Customer.
+        */
 	@Override
 	public Customer getCustomerById(int customerId) throws CustomerNotFoundException {
 		// TODO Auto-generated method stub
@@ -97,6 +128,15 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return cust;
 	}
 
+	/**
+	* This method returns the details of the product corresponding to the productId.
+	* It uses the tables PRODUCT and COMPANY. It checks if the productId is present in the PRODUCT 
+	* table, then it retrieves the GST Number.The query for the GST Number is set to retrieve the 
+	* company details in the COMPANY table. If company is found corresponding to the GST Number, then
+	* it return the details of product.
+    * @param    productId
+    * @return   Object of type Product
+    */
 	public Product productFetcher(int productId) throws CompanyNotFoundException, ProductNotFoundException {
 		String queryProduct = "SELECT * FROM APP.PRODUCT WHERE productId=?";
 		String queryCompany = "SELECT * FROM APP.COMPANY WHERE gstNumber=?";
@@ -111,33 +151,36 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 			ppstmtProduct = con.prepareStatement(queryProduct);
 			ppstmtCompany = con.prepareStatement(queryCompany);
 
-			ppstmtProduct.setInt(1, productId);
+			ppstmtProduct.setInt(1, productId);//1 specifies the first parameter in the query  
 
 			rsProduct = ppstmtProduct.executeQuery();
 			if (rsProduct.next()) {
-				// Product Found
+				// Product is found in the product table
 				String gstNum = rsProduct.getString(5);
 
 				ppstmtCompany.setString(1, gstNum);
 				rsCompany = ppstmtCompany.executeQuery();
 				if (rsCompany.next()) {
-					// PRODUCT OBJECT IS ADDED TO PRODUCT ARRAY_LIST
+					//Company found in the Company table respective to gst number
+					//Creating and returning the Product object
 					return (new Product(rsProduct.getInt(1), rsProduct.getString(2), rsProduct.getDouble(3),
 							rsProduct.getString(4),
 							new Company(rsCompany.getString(1), rsCompany.getString(2), rsCompany.getString(3),
 									rsCompany.getString(4), rsCompany.getTime(5), rsCompany.getTime(6)),
-							rsProduct.getTime(6), rsProduct.getTime(7)));
+							rsProduct.getTime(6), rsProduct.getTime(7))); 
 				} else {
 					throw new CompanyNotFoundException(
 							"Company is not added in Company Database. Please add Company First.");
+					//throwing exception for company not present in database
 				}
 
 			} else {
 				throw new ProductNotFoundException(
 						"Product is not added in Product Database. Please add Product First.");
+				//throwing exception for product not present in database
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -160,6 +203,14 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	}
 
+	/**
+	* This method returns the list of order details an employee is having corresponding to the employeeId.
+	* It uses the tables ORDERDETAILS. OrderList is created to store the orders an employee has. 
+	* It calls the method orderFetcher which in turn calls the method productFetcher to store the
+	* order details.
+    * @param    employeeId
+    * @return   list of OrderDetails
+    */
 	@Override
 	public List<OrderDetails> getOrdersOfEmployee(int employeeId)
 			throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
@@ -198,6 +249,14 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method will return the list of all Orders with same customerId. If no order for customerId exists
+	* then it will return NULL. So,to get OrderDetails it will first call orderFetcher method with orderId, 
+	* which it will get after executing select query.
+	* Each returned value from the orderFetcher will be added into ArrayList of OrderDetails.
+        * @param  customerId unique number given to each customerId.
+        * @return  List of object object of type OrderDetails.
+        */
 	@Override
 	public List<OrderDetails> getOrdersOfCustomer(int customerId)
 			throws OrderNotFoundForEmployee, ProductNotFoundException, CompanyNotFoundException {
@@ -231,6 +290,12 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method will add Invoice object to the database. It will simply get values for column with 
+	* getters and execute the preparedStatement.
+        * @param  invoice of type Invoice.
+        * @return  same invoice of type Invoice.
+        */
 	@Override
 	public Invoice addInvoiceToDB(Invoice invoice) {
 
@@ -272,6 +337,14 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method will return the object of type Invoice which will behaving same orderId equal to the 
+	* given argument. To achieve this, it will first run a search query on Invoice table to get Invoice
+	* object parameters and orderFetcher to get object of OrderDetails which is first parameter of Invoice 
+	* constructor. If no such orderId exists in the table, then it will return null.
+        * @param  orderId - unique number given to each Order.
+        * @return  Object of type Invoice.
+        */
 	@Override
 	public Invoice getInvoiceByOrderId(int orderId)
 			throws OrderNotFoundForEmployee, ProductNotFoundException, InvoiceNotFoundException {
@@ -306,6 +379,12 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	}
 
+	/**
+	* This method will return all the Products which exists in the table. It stores all the products into
+	* an ArrayList and to get each Product, it will call ProductFetcher for each row of ResultSet.
+        * @param  None.
+        * @return  ArrayList of type Product.
+        */
 	@Override
 	public List<Product> getProducts() throws ProductNotFoundException, CompanyNotFoundException {
 
@@ -344,6 +423,12 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	}
 
+	/**
+	* This method is called when an employee wants to add product to the database.
+	* It basically performs the insert query over Product table.
+        * @param  An Array of type Product.
+        * @return  None.
+        */
 	@Override
 	public void addProductsToDB(Product[] products) {
 
@@ -385,6 +470,14 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	}
 
+	/**
+	* This method will add the passed object of OrderDetails to the database and if it succeed, will return
+	* the same object. So, in order to achieve this, the function will execute three different queries in
+	* sequence to extract required column values from object and insert it into OrderDetails table and 
+	* also makes an entry into OrderProducts Table.
+		* @param  orderDetails of type OrderDetails.
+        * @return  orderDetails of type OrderDetails.
+        */
 	@Override
 	public OrderDetails addOrdertoDB(OrderDetails orderDetails) {
 		// TODO Auto-generated method stub
@@ -440,6 +533,13 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method is.called when the user wants to approve his/her order. So, for this it just updates the
+	*  status column of table OrderDetails, by using orderId as searching key.It basically performs the 
+	*  update query over OrderDetails table.
+        * @param  orderId of type integer.
+        * @return  object of type OrderDetails.
+        */
 	@Override
 	public OrderDetails approveOrder(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
 		// TODO Auto-generated method stub
@@ -461,6 +561,15 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 	}
 
+	/**
+	* This method is used to complete the approved orders of customer. For this, it first run select query 
+	* on OrderDetails table and selects the row which have status value equal to APPROVED. And then it 
+	* performs update query and set the status value to Completed. 
+	* It basically performs the Update query on OrderDetails table. It uses ArrayList to store all the Orders
+	* with status completed and at last return the same ArrayList.
+        * @param  None.
+        * @return  ArrayList of type OrderDetails.
+        */
 	@Override // CRON
 	public List<OrderDetails> completeOrder() throws OrderNotFoundForEmployee, ProductNotFoundException {
 
@@ -502,6 +611,13 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method is called to change status of Orders which are ordered before 30 days from today.
+	* It basically performs the update query on OrderDetails table to check whether orderDate is before 
+	* 30 days from current_day and changed the status to EXPIRED.
+        * @param  None.
+        * @return  List of OrderDetails with status Expired.
+        */
 	@Override // CRON
 	public List<OrderDetails> expiryOrder() throws OrderNotFoundForEmployee, ProductNotFoundException {
 
@@ -535,17 +651,27 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		}
 		return null;
 	}
-
+	
+	
+	/**
+	* This method returns the order details corresponding to the orderId.
+	* It uses the tables ORDERDETAILS and ORDERPRODUCTS. Order id is set in the query to fetch the order
+	* details. ArrayList of Product is created to store the products and productFetcher method is called
+	* to add the products in the list. Object of orderDetails is returned with the products.
+    	* @param    orderId
+    	* @return   Object of type OrderDetails
+    */
 	public OrderDetails orderFetcher(int orderId) throws OrderNotFoundForEmployee, ProductNotFoundException {
 
-		String query = "SELECT * FROM APP.ORDERDETAILS WHERE orderId=?";
-		String queryOrder = "SELECT * FROM APP.ORDERPRODUCTS WHERE orderId=?";
+		String query = "SELECT * FROM APP.ORDERDETAILS WHERE orderId=?";//Fetching the query of orderId passed from orderdetails table
+		String queryOrder = "SELECT * FROM APP.ORDERPRODUCTS WHERE orderId=?";//Fetching the column from orderproducts table 
 
 		ResultSet rs = null;
 		ResultSet rsOrder = null;
-
+		
+		
 		ArrayList<Product> productList = null;
-
+		//productList List to store the product present in each order
 		try {
 			PreparedStatement ppstmt = con.prepareStatement(query);
 			PreparedStatement ppstmtOrder = con.prepareStatement(queryOrder);
@@ -553,7 +679,7 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 			rs = ppstmt.executeQuery();
 
 			while (rs.next()) {
-
+				
 				// ORDER FETCHED
 				ppstmtOrder.setInt(1, rs.getInt(1));
 				rsOrder = ppstmtOrder.executeQuery();
@@ -572,12 +698,18 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 
 			}
 		} catch (SQLException | CompanyNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+	/**
+	* This method is to update the password of the customer in the CUSTOMER table corresponding 
+	* to the customerId.
+		* @param    customer
+		* @return   Object of type Customer
+    */
 	@Override
 	public Customer updateCustomerPassword(Customer customer) {
 
@@ -607,6 +739,12 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method is to update the password of the employee in the EMPLOYEE table corresponding 
+	* to the employeeId.
+		* @param    employee
+		* @return   Object of type Employee
+    */
 	@Override
 	public Employee updateEmployeePassword(Employee employee) {
 
@@ -636,6 +774,13 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method is used to fetch the object of type SessionEntity based on the passed value of personId. 
+	* Main use of this method is only to fetch row where personId matches with the column value of personId
+	* of table SessionEntity. 
+        * @param  personId of type integer.
+        * @return Object of SessionEntity.
+        */
 	@Override
 	public SessionEntity tokenFetcher(int personId) {
 		// TODO Auto-generated method stub
@@ -659,6 +804,14 @@ public class OrderProcessingDAOImpl implements OrderProcessingDAO {
 		return null;
 	}
 
+	/**
+	* This method is used to update the sessionToken of type String every time user log into the system. 
+	* It is used for authentication. 
+	* It will extract values from the sessionEntity argument and run UPDATE query on SessionEntity table. 
+	* The value of sessionToken will change every time user logs into the system.
+        * @param  sessionEntity of type SessionEntity.
+        * @return Object of SessionEntity.
+        */
 	@Override
 	public SessionEntity updateToken(SessionEntity sessionEntity) {
 
